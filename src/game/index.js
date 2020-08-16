@@ -78,6 +78,11 @@ export default class Game {
             particle.update(deltaTime);
             return particle.isParticle;
         });
+
+        if (this.player) {
+            this.camera.x = this.player.x;
+            this.camera.y = this.player.y;
+        }
     }
 
     render() {
@@ -106,8 +111,8 @@ export default class Game {
             this.ctx.stroke();
         }
 
-        this.objects.forEach(object => object.render(this.ctx));
-        this.particles.forEach(particle => particle.render(this.ctx));
+        this.objects.forEach(object => object.render(this.ctx, this));
+        this.particles.forEach(particle => particle.render(this.ctx, this));
     }
 
 }
