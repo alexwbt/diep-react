@@ -19,15 +19,18 @@ export const createObjectInfo = info => ({
     // game
     team: 'self',
     health: 100,
-    maxHealth: info.health || 100,
+    maxHealth: 100,
     bodyDamage: 1,
 
     ...info
 });
 
-export default class Object {
+export default class GameObject {
 
     constructor(info) {
+        this.x = info.x;
+        this.y = info.y;
+        this.radius = info.radius;
         this.shape = info.shape;
 
         // render

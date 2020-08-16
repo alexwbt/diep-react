@@ -1,3 +1,4 @@
+import { radian } from "./maths";
 
 export default class Game {
 
@@ -9,10 +10,16 @@ export default class Game {
         this.gridSize = 10;
 
         // game
-        this.scale = 1;
-        this.camera = { x: 0, y: 0 };
         this.objects = [];
         this.particles = [];
+
+        // camera
+        this.scale = 1;
+        this.camera = { x: 0, y: 0 };
+        this.cameraSpeed = 1;
+
+        // control
+        this.inputDirections = [];
 
         this.running = true;
         this.startTime = Date.now();
@@ -70,18 +77,31 @@ export default class Game {
     }
 
     update(deltaTime) {
+        // update objects
         this.objects = this.objects.filter(object => {
             object.update(deltaTime);
             return !object.removed;
         });
+
+        // update particles
         this.particles = this.particles.filter(particle => {
             particle.update(deltaTime);
             return particle.isParticle;
         });
 
+        // update input
+        const direction = this.inputDirections.reduce((a, dir) => {
+            const r = radian(dir);
+            a.x += Math.cos(r);
+            a.y += Math.sin(r);
+        }, { x: 0, y: 0 });
+
+        // update camera
         if (this.player) {
             this.camera.x = this.player.x;
             this.camera.y = this.player.y;
+        } else {
+
         }
     }
 
