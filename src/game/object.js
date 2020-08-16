@@ -66,6 +66,10 @@ export default class GameObject {
         };
     }
 
+    addForce(force) {
+        this.forces.push(force);
+    }
+
     update(deltaTime) {
 
     }

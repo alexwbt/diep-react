@@ -19,7 +19,13 @@ export default class Game {
         this.cameraSpeed = 1;
 
         // control
-        this.inputDirections = [];
+        this.keyMap = [
+            { x: 0, y: -1 }, // w
+            { x: -1, y: 0 }, // a
+            { x: 0, y: 1 },  // s
+            { x: 1, y: 0 }   // d
+        ];
+        this.keyDown = [];
 
         this.running = true;
         this.startTime = Date.now();
@@ -37,6 +43,10 @@ export default class Game {
     setCanvas(canvas) {
         this.canvas = canvas;
         this.ctx = canvas.getContext('2d');
+    }
+
+    setKeyDown(keyDown) {
+        this.keyDown = keyDown;
     }
 
     stop() {
@@ -90,30 +100,36 @@ export default class Game {
         });
 
         // update input
-        const direction = this.inputDirections.reduce((a, dir) => {
-            const r = radian(dir);
-            a.x += Math.cos(r);
-            a.y += Math.sin(r);
-        }, { x: 0, y: 0 });
+        if (this.player) {
+            const input = { x: 0, y: 0 };
+            for (let i = 0; i < this.keyDown.length; i++) {
+                if (this.keyDown[i]) {
+                    input.x += this.keyMap[i].x;
+                    input.y += this.keyMap[i].y;
+                }
+            }
+            this.player.move(Math.atan2(input.y, input.x));
+        }
 
         // update camera
-        if (this.player) {
-            this.camera.x = this.player.x;
-            this.camera.y = this.player.y;
-        } else {
-
+        if (this.focus) {
+            this.camera.x = this.focus.x;
+            this.camera.y = this.focus.y;
         }
     }
 
     render() {
+        // update canvas size
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
         const W = this.canvas.width;
         const H = this.canvas.height;
 
+        // render background
         this.ctx.fillStyle = this.backgroundColor;
         this.ctx.fillRect(0, 0, W, H);
 
+        // render grid
         this.ctx.strokeStyle = this.gridColor;
         this.ctx.lineWidth = this.gridWidth * this.scale;
         const gridSize = this.gridSize * this.scale;
@@ -131,6 +147,7 @@ export default class Game {
             this.ctx.stroke();
         }
 
+        // render objects and particles
         this.objects.forEach(object => object.render(this.ctx, this));
         this.particles.forEach(particle => particle.render(this.ctx, this));
     }

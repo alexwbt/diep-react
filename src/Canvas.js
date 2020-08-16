@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import Game from './game';
 import useKeyInput from './KeyInputHook';
-import GameObject, { createObjectInfo } from './game/object';
 
 const game = new Game();
 
@@ -14,8 +13,6 @@ const Canvas = () => {
 
     useEffect(() => {
         game.setCanvas(canvas.current);
-        game.spawn(new GameObject(createObjectInfo()));
-        game.spawn(new GameObject(createObjectInfo({ x: 10 })));
     }, [canvas]);
 
     return (
