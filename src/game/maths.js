@@ -10,9 +10,3 @@ export const closerThan = (p1, p2, distance) => {
     const b = p1.y - p2.y;
     return a * a + b * b < distance * distance;
 };
-
-/**
- * Translates degree to radian.
- * @param {number} degree 
- */
-export const radian = degree => degree * Math.PI / 180;

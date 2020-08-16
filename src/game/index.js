@@ -1,4 +1,3 @@
-import { radian } from "./maths";
 
 export default class Game {
 
