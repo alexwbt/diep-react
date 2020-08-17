@@ -1,3 +1,7 @@
+import { collision } from "./collisions";
+import { createObjectInfo } from "./object";
+import RegularPolygon from "./object/RegularPolygon";
+import { pythagorean, degree, different } from "./maths";
 
 export default class Game {
 
@@ -9,11 +13,13 @@ export default class Game {
         this.gridSize = 10;
 
         // game
+        this.spawnList = [];
         this.objects = [];
         this.particles = [];
 
         // camera
         this.scale = 1;
+        this.view = 500;
         this.camera = { x: 0, y: 0 };
         this.cameraSpeed = 1;
 
@@ -25,6 +31,7 @@ export default class Game {
             { x: 1, y: 0 }   // d
         ];
         this.keyDown = [];
+        this.playerId = 0;
 
         this.running = true;
         this.startTime = Date.now();
@@ -34,7 +41,8 @@ export default class Game {
     loop = () => {
         const now = Date.now();
         const deltaTime = (now - this.startTime) / 1000;
-        this.update(deltaTime);
+        this.startTime = now;
+        this.update(deltaTime, this);
         this.canvas && this.render();
         this.running && window.requestAnimationFrame(this.loop);
     };
@@ -46,6 +54,20 @@ export default class Game {
 
     setKeyDown(keyDown) {
         this.keyDown = keyDown;
+    }
+
+    setMouse({ x, y }) {
+        if (this.player) {
+            const mouse = this.inGame(x, y);
+            const diff = different(this.player, mouse);
+            this.player.rotate = degree(Math.atan2(diff.y, diff.x));
+        }
+    }
+
+    fire(fire) {
+        if (this.player) {
+            this.player.weapon.fire(fire);
+        }
     }
 
     stop() {
@@ -76,8 +98,18 @@ export default class Game {
         };
     }
 
-    spawn(object) {
-        this.objects.push(object);
+    /**
+     * Spawns an object.
+     * @param {*} object 
+     * @param {boolean} [randomLocation] - Spawn in random location.
+     * @param {number} [range] - Range of random location.
+     */
+    spawn(object, randomLocation, range = 1000) {
+        if (randomLocation) {
+            object.x = Math.random() * range - range / 2;
+            object.y = Math.random() * range - range / 2;
+        }
+        this.spawnList.push(object);
     }
 
     spawnParticle(particle) {
@@ -85,16 +117,47 @@ export default class Game {
         this.particles.push(particle);
     }
 
+    /**
+     * Spawns obstacles.
+     * @param {number} [count] - Number of obstacles.
+     * @param {{min: number, max: number}} [vertices] - Range of random vertices.
+     * @param {{min: number, max: number}} [radius] - Range of random radius.
+     */
+    spawnObstacles(count = 50, vertices = { min: 3, max: 5 }, radius = { min: 5, max: 20 }) {
+        const colors = ['orange', '#FF9', '#06f'];
+        for (let i = 0; i < count; i++) {
+            const randomRadius = Math.random() * (radius.max - radius.min) + radius.min;
+            const randomVertices = Math.round(Math.random() * (vertices.max - vertices.min) + vertices.min);
+            this.spawn(new RegularPolygon(createObjectInfo({
+                radius: randomRadius,
+                color: colors[randomVertices % colors.length],
+                team: 'obstacle',
+                health: randomRadius * 5,
+                maxHealth: randomRadius * 5
+            }), randomVertices), true);
+        }
+    }
+
     update(deltaTime) {
         // update objects
+        this.objects = this.objects.concat(this.spawnList);
+        this.spawnList = [];
         this.objects = this.objects.filter(object => {
-            object.update(deltaTime);
+            if (object.playerId === this.playerId) {
+                this.player = object;
+                this.focus = object;
+            }
+            object.update(deltaTime, this);
+            this.objects.forEach(otherObject => {
+                if (otherObject !== object && collision(object, otherObject))
+                    object.collide(otherObject, deltaTime);
+            });
             return !object.removed;
         });
 
         // update particles
         this.particles = this.particles.filter(particle => {
-            particle.update(deltaTime);
+            particle.update(deltaTime, this);
             return particle.isParticle;
         });
 
@@ -107,11 +170,14 @@ export default class Game {
                     input.y += this.keyMap[i].y;
                 }
             }
-            this.player.move(Math.atan2(input.y, input.x));
+            if (input.x !== 0 || input.y !== 0)
+                this.player.move(Math.atan2(input.y, input.x), deltaTime);
+            else this.player.stop();
         }
 
         // update camera
         if (this.focus) {
+            this.scale = pythagorean(this.canvas.width, this.canvas.height) / (this.view + this.focus.radius * 4);
             this.camera.x = this.focus.x;
             this.camera.y = this.focus.y;
         }
