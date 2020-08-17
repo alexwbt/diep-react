@@ -2,6 +2,7 @@ import { collision } from "./collisions";
 import { createObjectInfo } from "./object";
 import RegularPolygon from "./object/RegularPolygon";
 import { pythagorean, degree, different } from "./maths";
+import MiniMap from "./huds/minimap";
 
 export default class Game {
 
@@ -32,6 +33,9 @@ export default class Game {
         ];
         this.keyDown = [];
         this.playerId = 0;
+
+        // minimap
+        this.minimap = new MiniMap(this);
 
         this.running = true;
         this.startTime = Date.now();
@@ -221,6 +225,8 @@ export default class Game {
         // render objects and particles
         this.objects.forEach(object => object.render(this.ctx, this));
         this.particles.forEach(particle => particle.render(this.ctx, this));
+
+        this.minimap.render(this.ctx);
     }
 
 }

@@ -189,4 +189,23 @@ export default class GameObject {
         }
     }
 
+    onMap(map) {
+        const { x, y } = map.onMap(this.x, this.y);
+        const radius = this.radius * map.scale;
+        return {
+            x, y, radius,
+            onMap: collision({ shape: 'circle', x, y, radius }, { shape: 'circle', x: map.x, y: map.y, radius: map.radius })
+        };
+    }
+
+    mapRender(ctx, map) {
+        const { x, y, radius, onMap } = this.onMap(map);
+        if (!onMap) return;
+
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, 2 * Math.PI);
+        ctx.fill();
+    }
+
 }

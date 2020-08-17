@@ -112,6 +112,7 @@ export default class Cannon {
                 color: 'red',
                 borderWidth: 0.5,
                 renderHealthBar: false,
+                renderOnMap: false,
                 team: this.owner.team,
                 health: this.owner.bulletPenetration * this.bulletPenetration,
                 bodyDamage: this.owner.bulletDamage * this.bulletDamage,

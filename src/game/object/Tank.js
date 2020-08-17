@@ -1,5 +1,6 @@
 import GameObject, { createObjectInfo } from ".";
 import Weapon from "../weapon";
+import { radians } from "../maths";
 
 export const createTankInfo = info => ({
     ...createObjectInfo(info),
@@ -77,6 +78,28 @@ export default class Tank extends GameObject {
         this.weapon.render(ctx, game);
         ctx.globalAlpha = 0;
         super.render(ctx, game);
+    }
+
+    mapRender(ctx, map) {
+        const { x, y, radius, onMap } = this.onMap(map);
+        if (!onMap) return;
+
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, 2 * Math.PI);
+        ctx.fill();
+
+
+
+        let dir = radians(this.rotate);
+        ctx.beginPath();
+        ctx.moveTo(x + Math.cos(dir) * radius * 2, y + Math.sin(dir) * radius * 2);
+        dir += radians(30);
+        ctx.lineTo(x + Math.cos(dir) * radius * 1.5, y + Math.sin(dir) * radius * 1.5);
+        dir -= radians(60);
+        ctx.lineTo(x + Math.cos(dir) * radius * 1.5, y + Math.sin(dir) * radius * 1.5);
+        ctx.closePath();
+        ctx.fill();
     }
 
 }
