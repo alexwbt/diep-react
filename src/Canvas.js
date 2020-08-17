@@ -5,9 +5,7 @@ import useKeyInput from './KeyInputHook';
 import useMouseInput from './MouseInputHook';
 
 const game = new Game();
-const player = new Tank(createTankInfo({ x: 10 }));
-player.playerId = 0;
-game.spawn(player);
+game.playerId = game.spawn(new Tank(createTankInfo({ x: 10, weaponType: 'twinCannon' })));
 game.spawnObstacles();
 
 const Canvas = () => {

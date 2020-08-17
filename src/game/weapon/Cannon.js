@@ -46,7 +46,7 @@ export default class Cannon {
         this.color = "#aaa";
         this.reloadCounter = 0;
     }
-    
+
     getData() {
         return this.reloadCounter;
     }
@@ -98,12 +98,12 @@ export default class Cannon {
     }
 
     update(deltaTime, game) {
-        if (this.reloadCounter > 0)
+        if (this.reloadCounter > 0 || (this.owner.weapon.firing && this.reloadCounter > -this.delay * this.reloadSpeed))
             this.reloadCounter -= deltaTime;
         else if (this.owner.weapon.firing) {
             const x = (this.x + this.length) * this.owner.radius;
             const y = this.y * this.owner.radius;
-            const dir = Math.atan2(y, x) + radians(this.owner.rotate) + radians(this.rotate);
+            const dir = Math.atan2(y, x) + radians(this.owner.rotate) + this.rotate;
             const mag = pythagorean(x, y);
             game.spawn(new CannonBall(createObjectInfo({
                 x: this.owner.x + Math.cos(dir) * mag,
@@ -118,10 +118,11 @@ export default class Cannon {
                 bodyDamage: this.owner.bulletDamage * this.bulletDamage,
                 movingDirection: radians(this.owner.rotate) + this.rotate,
                 movingSpeed: this.bulletSpeed * this.owner.bulletSpeed,
-                lifeTime: this.range
+                lifeTime: this.range,
+                ownerId: this.owner.objectId
             })));
 
-            this.reloadCounter = this.reloadSpeed * this.owner.reloadSpeed + this.delay;
+            this.reloadCounter = (this.owner.reloadSpeed - this.delay) * this.reloadSpeed;
         }
     }
 

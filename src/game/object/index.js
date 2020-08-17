@@ -123,15 +123,18 @@ export default class GameObject {
         this.forces.push(force);
     }
 
-    collide(otherObject, deltaTime) {
+    differentTeam(otherObject) {
+        return this.team !== otherObject.team || this.team === 'self';
+    }
+
+    collide(otherObject) {
         const dif = different(otherObject, this);
         this.addForce({
             x: dif.x,
             y: dif.y
         });
 
-        if ((this.team === 'self' || this.team !== otherObject.team) &&
-            this.owner !== otherObject && otherObject.owner !== this) {
+        if (this.differentTeam(otherObject) && otherObject.differentTeam(this)) {
             this.health -= otherObject.bodyDamage;
             if (this.health <= 0) this.removed = true;
             else this.alpha = 0.5;
@@ -181,11 +184,9 @@ export default class GameObject {
     healthBarRender(ctx, x, y, radius) {
         if (this.renderHealthBar && this.health !== this.maxHealth) {
             ctx.fillStyle = this.healthBarColor;
-            ctx.fillRect(x - radius, y + radius * (1 + this.borderWidth / 2),
-                radius * 2, radius * this.borderWidth);
+            ctx.fillRect(x - radius, y + radius * 1.2, radius * 2, 8);
             ctx.fillStyle = this.healthColor;
-            ctx.fillRect(x - radius, y + radius * (1 + this.borderWidth / 2),
-                radius * 2 * this.health / this.maxHealth, radius * this.borderWidth);
+            ctx.fillRect(x - radius, y + radius * 1.2, radius * 2 * this.health / this.maxHealth, 8);
         }
     }
 

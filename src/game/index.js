@@ -14,6 +14,7 @@ export default class Game {
         this.gridSize = 10;
 
         // game
+        this.nextObjectId = 0;
         this.spawnList = [];
         this.objects = [];
         this.particles = [];
@@ -32,7 +33,6 @@ export default class Game {
             { x: 1, y: 0 }   // d
         ];
         this.keyDown = [];
-        this.playerId = 0;
 
         // minimap
         this.minimap = new MiniMap(this);
@@ -111,11 +111,13 @@ export default class Game {
      * @param {number} [range] - Range of random location.
      */
     spawn(object, randomLocation, range = 1000) {
+        object.objectId = this.nextObjectId++;
         if (randomLocation) {
             object.x = Math.random() * range - range / 2;
             object.y = Math.random() * range - range / 2;
         }
         this.spawnList.push(object);
+        return object.objectId;
     }
 
     spawnParticle(particle) {
@@ -157,14 +159,14 @@ export default class Game {
         this.objects = this.objects.concat(this.spawnList);
         this.spawnList = [];
         this.objects = this.objects.filter(object => {
-            if (object.playerId === this.playerId) {
+            if (object.objectId === this.playerId) {
                 this.player = object;
                 this.focus = object;
             }
             object.update(deltaTime, this);
             this.objects.forEach(otherObject => {
                 if (otherObject !== object && collision(object, otherObject))
-                    object.collide(otherObject, deltaTime);
+                    object.collide(otherObject);
             });
             if (object.removed)
                 this.spawnParticle(object);

@@ -3,13 +3,13 @@ import Weapon from "../weapon";
 import { radians } from "../maths";
 
 export const createTankInfo = info => ({
-    ...createObjectInfo(info),
     movementSpeed: 50,
     reloadSpeed: 1,
     bulletSpeed: 100,
     bulletDamage: 1,
     bulletPenetration: 10,
     weaponType: 'singleCannon',
+    ...createObjectInfo(info)
 });
 
 export default class Tank extends GameObject {
