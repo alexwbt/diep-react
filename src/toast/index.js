@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled, { keyframes } from 'styled-components';
 
 const ToastContainer = styled.div`
@@ -7,7 +7,7 @@ const ToastContainer = styled.div`
     transform: translateX(-50%);
 `;
 
-const rotate = keyframes`
+const dropDown = keyframes`
     from {
         transform: translateY(-100vh);
     }
@@ -20,7 +20,7 @@ const ToastWrapper = styled.div`
     margin: 5px;
     text-align: center;
     
-    animation: ${rotate} 0.3s linear;
+    animation: ${dropDown} 0.3s linear;
 `;
 
 const Toast = styled.div`
