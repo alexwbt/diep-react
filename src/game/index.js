@@ -42,8 +42,10 @@ export default class Game {
         const now = Date.now();
         const deltaTime = (now - this.startTime) / 1000;
         this.startTime = now;
-        this.update(deltaTime, this);
-        this.canvas && this.render();
+        if (this.canvas) {
+            this.update(deltaTime, this);
+            this.render();
+        }
         this.running && window.requestAnimationFrame(this.loop);
     };
 
@@ -113,7 +115,8 @@ export default class Game {
     }
 
     spawnParticle(particle) {
-        particle.isParticle = true;
+        particle.renderHealthBar = false;
+        particle.alpha = 1;
         this.particles.push(particle);
     }
 
@@ -139,6 +142,13 @@ export default class Game {
     }
 
     update(deltaTime) {
+        // update particles
+        this.particles = this.particles.filter(particle => {
+            particle.update(deltaTime, this);
+            particle.alpha -= deltaTime * 20;
+            return particle.alpha > 0;
+        });
+
         // update objects
         this.objects = this.objects.concat(this.spawnList);
         this.spawnList = [];
@@ -152,13 +162,9 @@ export default class Game {
                 if (otherObject !== object && collision(object, otherObject))
                     object.collide(otherObject, deltaTime);
             });
+            if (object.removed)
+                this.spawnParticle(object);
             return !object.removed;
-        });
-
-        // update particles
-        this.particles = this.particles.filter(particle => {
-            particle.update(deltaTime, this);
-            return particle.isParticle;
         });
 
         // update input
