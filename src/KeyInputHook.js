@@ -10,13 +10,12 @@ const useKeyInput = keys => {
     }, keys.map(() => false));
 
     useEffect(() => {
-        const downHandler = e => !e.repeat && setKeyDown(e);
-        const upHandler = e => !e.repeat && setKeyDown(e);
-        window.addEventListener('keydown', downHandler);
-        window.addEventListener('keyup', upHandler);
+        const inputHandler = e => !e.repeat && setKeyDown(e);
+        window.addEventListener('keydown', inputHandler);
+        window.addEventListener('keyup', inputHandler);
         return () => {
-            window.removeEventListener('keydown', downHandler);
-            window.removeEventListener('keyup', upHandler);
+            window.removeEventListener('keydown', inputHandler);
+            window.removeEventListener('keyup', inputHandler);
         };
     }, []);
 

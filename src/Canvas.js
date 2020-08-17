@@ -11,11 +11,12 @@ game.spawnObstacles();
 const Canvas = () => {
     const canvas = useRef(null);
     const keyDown = useKeyInput(['w', 'a', 's', 'd']);
-    const mouse = useMouseInput(() => game.fire(true), () => game.fire(false));
+    const [mouse, mouseDown] = useMouseInput();
 
     useEffect(() => game.setCanvas(canvas.current), [canvas]);
     useEffect(() => game.setKeyDown(keyDown), [keyDown]);
     useEffect(() => game.setMouse(mouse), [mouse]);
+    useEffect(() => game.fire(mouseDown), [mouseDown]);
 
     return <canvas ref={canvas}></canvas>;
 };
