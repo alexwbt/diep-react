@@ -1,5 +1,3 @@
-html, body, canvas {
-    position: absolute;
-    padding: 0;
+body {
     margin: 0;
 }

@@ -1,17 +1,19 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
 
-const ToastContainer = styled.div`
+const ToasterContainer = styled.div`
     position: fixed;
     left: 50%;
     transform: translateX(-50%);
 `;
 
-const dropDown = keyframes`
+const dropDownAnimation = keyframes`
     from {
-        transform: translateY(-100vh);
+        opacity: 0;
+        transform: translateY(-100%);
     }
     to {
+        opacity: 1;
         transform: 0;
     }
 `;
@@ -19,32 +21,31 @@ const dropDown = keyframes`
 const ToastWrapper = styled.div`
     margin: 5px;
     text-align: center;
-    
-    animation: ${dropDown} 0.3s linear;
+    animation: ${dropDownAnimation} 0.3s linear;
 `;
 
 const Toast = styled.div`
     display: inline-block;
     padding: 5px 15px;
-    background-color: grey;
+    background-color: ${props => props.color};
     border-radius: 5px;
-    color: white;
-    font: 18px consolas;
     opacity: 0.8;
+    
+    font: 18px consolas;
+    font-weight: ${props => props.fontWeight};
+    color: ${props => props.textColor};
 `;
 
-const Toaster = ({toasts}) => {
-    return (
-        <ToastContainer>
-            {
-                toasts.map((t, i) => (
-                    <ToastWrapper key={i}>
-                        <Toast>{t}</Toast>
-                    </ToastWrapper>
-                ))
-            }
-        </ToastContainer>
-    );
-};
+const Toaster = ({ toasts }) => (
+    <ToasterContainer>
+        {
+            toasts.map((toast, i) => (
+                <ToastWrapper key={i}>
+                    <Toast {...toast}>{toast.message}</Toast>
+                </ToastWrapper>
+            ))
+        }
+    </ToasterContainer>
+);
 
 export default Toaster;
