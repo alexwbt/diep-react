@@ -1,8 +1,10 @@
-import { collision } from "./collisions";
-import { createObjectInfo } from "./object";
-import RegularPolygon from "./object/RegularPolygon";
-import { pythagorean, degree, different } from "./maths";
-import MiniMap from "./huds/minimap";
+import { collision } from './collisions';
+import MiniMap from './huds/minimap';
+import { degree, different, pythagorean } from './maths';
+import GameObject, { createObjectInfo } from './object';
+import CannonBall from './object/CannonBall';
+import RegularPolygon from './object/RegularPolygon';
+import Tank from './object/Tank';
 
 export default class Game {
 
@@ -14,7 +16,6 @@ export default class Game {
         this.gridSize = 10;
 
         // game
-        this.nextObjectId = 0;
         this.spawnList = [];
         this.objects = [];
         this.particles = [];
@@ -52,6 +53,29 @@ export default class Game {
         }
         this.running && window.requestAnimationFrame(this.loop);
     };
+
+    setData(data) {
+        const createObject = type => {
+            switch (type) {
+                default:
+                case 'GameObject': return new GameObject({});
+                case 'RegularPolygon': return new RegularPolygon({});
+                case 'CannonBall': return new CannonBall({});
+                case 'Tank': return new Tank({});
+            }
+        };
+        this.spawnList = [];
+        this.objects = data.objects.map(objectData => {
+            const object = createObject(objectData.objectType);
+            object.setData(objectData);
+            return object;
+        });
+        this.particles = data.particles.map(objectData => {
+            const object = createObject(objectData.objectType);
+            object.setData(objectData);
+            return object;
+        });
+    }
 
     setCanvas(canvas) {
         this.canvas = canvas;
@@ -111,13 +135,11 @@ export default class Game {
      * @param {number} [range] - Range of random location.
      */
     spawn(object, randomLocation, range = 1000) {
-        object.objectId = this.nextObjectId++;
         if (randomLocation) {
             object.x = Math.random() * range - range / 2;
             object.y = Math.random() * range - range / 2;
         }
         this.spawnList.push(object);
-        return object.objectId;
     }
 
     spawnParticle(particle) {
@@ -162,6 +184,12 @@ export default class Game {
             if (object.objectId === this.playerId) {
                 this.player = object;
                 this.focus = object;
+            } else if (object.control) { // socket control
+                object.rotate = object.control.rotate;
+                object.weapon.fire(object.control.firing);
+                if (object.control.moving)
+                    object.move(object.control.movingDirection, deltaTime);
+                else object.stop();
             }
             object.update(deltaTime, this);
             this.objects.forEach(otherObject => {
@@ -185,6 +213,10 @@ export default class Game {
             if (input.x !== 0 || input.y !== 0)
                 this.player.move(Math.atan2(input.y, input.x), deltaTime);
             else this.player.stop();
+
+            if (this.socket) {
+                this.socket.emit('update', this.player.getControl());
+            }
         }
 
         // update camera

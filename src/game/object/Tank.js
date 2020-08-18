@@ -34,6 +34,7 @@ export default class Tank extends GameObject {
         this.bulletSpeed = data.bulletSpeed;
         this.bulletDamage = data.bulletDamage;
         this.bulletPenetration = data.bulletPenetration;
+        this.control = data.control;
 
         if (data.weapon) {
             this.weapon = new Weapon(this, data.weapon.type);
@@ -43,7 +44,17 @@ export default class Tank extends GameObject {
         }
     }
 
+    getControl() {
+        return {
+            rotate: this.rotate,
+            movingDirection: this.movingDirection,
+            moving: this.moving,
+            firing: this.weapon.firing
+        };
+    }
+
     move(direction, deltaTime) {
+        this.moving = true;
         if (this.movingSpeed !== 0 && this.movingDirection !== direction) {
             this.addForce({
                 x: Math.cos(this.movingDirection) * this.movingSpeed,
@@ -61,11 +72,14 @@ export default class Tank extends GameObject {
     }
 
     stop() {
-        this.addForce({
-            x: Math.cos(this.movingDirection) * this.movingSpeed,
-            y: Math.sin(this.movingDirection) * this.movingSpeed
-        });
-        this.movingSpeed = 0;
+        this.moving = false;
+        if (this.movingSpeed > 0) {
+            this.addForce({
+                x: Math.cos(this.movingDirection) * this.movingSpeed,
+                y: Math.sin(this.movingDirection) * this.movingSpeed
+            });
+            this.movingSpeed = 0;
+        }
     }
 
     update(deltaTime, game) {

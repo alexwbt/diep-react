@@ -65,9 +65,12 @@ export default class GameObject {
             bodyDamage: this.bodyDamage,
 
             // movement
+            movingDirection: this.movingDirection,
+            movingSpeed: this.movingSpeed,
             forces: this.forces,
             momentum: this.momentum,
             friction: this.friction,
+            objectId: this.objectId,
             objectType: 'Object'
         };
     }
@@ -78,6 +81,7 @@ export default class GameObject {
         this.radius = data.radius;
         this.rotate = data.rotate;
         this.shape = data.shape;
+        this.objectId = data.objectId;
 
         // render
         this.color = data.color;
