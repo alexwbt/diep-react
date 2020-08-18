@@ -57,6 +57,7 @@ export default class GameObject {
             healthColor: this.healthColor,
             healthBarColor: this.healthBarColor,
             renderHealthBar: this.renderHealthBar,
+            name: this.name,
 
             // game
             team: this.team,
@@ -92,11 +93,12 @@ export default class GameObject {
         this.healthColor = data.healthColor;
         this.healthBarColor = data.healthBarColor;
         this.renderHealthBar = data.renderHealthBar;
+        this.name = data.name;
 
         // game
         this.team = data.team;
         this.health = data.health;
-        this.maxHealth = data.health;
+        this.maxHealth = data.maxHealth;
         this.bodyDamage = data.bodyDamage;
 
         // movement
@@ -182,6 +184,13 @@ export default class GameObject {
         ctx.stroke();
 
         this.healthBarRender(ctx, x, y, radius);
+
+        if (this.name) {
+            ctx.font = "30px consolas";
+            ctx.fillStyle = "black";
+            ctx.textAlign = "center";
+            ctx.fillText(this.name, x, y - radius * 1.5);
+        }
         ctx.globalAlpha = 1;
     }
 

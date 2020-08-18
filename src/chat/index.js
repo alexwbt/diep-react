@@ -59,7 +59,7 @@ const Message = styled.div`
     color: ${props => props.textColor};
 `;
 
-const Chat = ({ chats, onEnter }) => {
+const Chat = ({ chats, onEnter, show }) => {
     const scroll = useRef(null);
     const [message, setMessage] = useState('');
 
@@ -75,10 +75,10 @@ const Chat = ({ chats, onEnter }) => {
     }, [message, setMessage, onEnter]);
 
     useEffect(() => {
-        scroll.current.scrollTop = scroll.current.scrollHeight;
-    }, [chats, scroll])
+        if (show) scroll.current.scrollTop = scroll.current.scrollHeight;
+    }, [chats, scroll, show])
 
-    return (
+    return show && (
         <ChatContainer>
             <ChatScroll ref={scroll}>
                 {

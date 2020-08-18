@@ -34,6 +34,7 @@ export default class Game {
             { x: 1, y: 0 }   // d
         ];
         this.keyDown = [];
+        this.control = {};
 
         // minimap
         this.minimap = new MiniMap(this);
@@ -90,13 +91,15 @@ export default class Game {
         if (this.player) {
             const mouse = this.inGame(x, y);
             const diff = different(this.player, mouse);
-            this.player.rotate = degree(Math.atan2(diff.y, diff.x));
+            this.control.rotate = degree(Math.atan2(diff.y, diff.x));
+            this.player.rotate = this.control.rotate;
         }
     }
 
     fire(fire) {
         if (this.player) {
             this.player.weapon.fire(fire);
+            this.control.firing = fire;
         }
     }
 
@@ -181,15 +184,9 @@ export default class Game {
         this.objects = this.objects.concat(this.spawnList);
         this.spawnList = [];
         this.objects = this.objects.filter(object => {
-            if (object.objectId === this.playerId) {
+            if (object.objectId === this.playerId && object instanceof Tank) {
                 this.player = object;
                 this.focus = object;
-            } else if (object.control) { // socket control
-                object.rotate = object.control.rotate;
-                object.weapon.fire(object.control.firing);
-                if (object.control.moving)
-                    object.move(object.control.movingDirection, deltaTime);
-                else object.stop();
             }
             object.update(deltaTime, this);
             this.objects.forEach(otherObject => {
@@ -210,12 +207,14 @@ export default class Game {
                     input.y += this.keyMap[i].y;
                 }
             }
-            if (input.x !== 0 || input.y !== 0)
-                this.player.move(Math.atan2(input.y, input.x), deltaTime);
-            else this.player.stop();
+            this.control.moving = input.x !== 0 || input.y !== 0;
+            if (this.control.moving) {
+                this.control.movingDirection = Math.atan2(input.y, input.x);
+                this.player.move(this.control.movingDirection, deltaTime);
+            } else this.player.stop();
 
             if (this.socket) {
-                this.socket.emit('update', this.player.getControl());
+                this.socket.emit('update', this.control);
             }
         }
 

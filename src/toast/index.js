@@ -36,7 +36,7 @@ const Toast = styled.div`
     color: ${props => props.textColor};
 `;
 
-const Toaster = ({ toasts }) => (
+const Toaster = ({ toasts, show }) => show && (
     <ToasterContainer>
         {
             toasts.map((toast, i) => (
