@@ -72,7 +72,7 @@ export default class Game {
             const object = createObject(objectData.objectType);
             object.setData(objectData);
             if (object.objectId === this.playerId) {
-                object.rotate = +this.control.rotate;
+                object.rotate = this.control.rotate || 0;
             }
             return object;
         });
