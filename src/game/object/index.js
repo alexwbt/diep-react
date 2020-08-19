@@ -1,7 +1,7 @@
 import { collision } from "../collisions";
 import { different } from "../maths";
 
-export const createObjectInfo = info => ({
+const createObjectInfo = info => ({
     x: 0,
     y: 0,
     radius: 10,
@@ -37,7 +37,7 @@ export const createObjectInfo = info => ({
 export default class GameObject {
 
     constructor(info) {
-        this.setData(info);
+        this.setData(createObjectInfo(info));
     }
 
     getData() {

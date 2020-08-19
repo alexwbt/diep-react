@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import Chat from './chat';
 import useChat from './chat/ChatHook';
 import Game from './game';
-import Tank, { createTankInfo } from './game/object/Tank';
+import Tank from './game/object/Tank';
 import useKeyInput from './input/KeyInputHook';
 import useMouseInput from './input/MouseInputHook';
 import Toaster from './toast';
@@ -16,17 +16,20 @@ const FixedCanvas = styled.canvas`
 `;
 
 const game = new Game();
-const player = new Tank(createTankInfo({ x: 10, weaponType: 'twinCannon' }));
+const player = new Tank({ x: 10, weaponType: 'twinCannon' });
 player.objectId = 0;
 game.playerId = 0;
 game.spawn(player);
+game.spawnWeaponBalls();
 game.spawnObstacles();
 
 const Canvas = () => {
     const canvas = useRef(null);
     const keyDown = useKeyInput(['w', 'a', 's', 'd']);
     const keyToggle = useKeyInput(['c', 'v'], true);
-    const [mouse, mouseDown] = useMouseInput();
+    const [mouse, mouseDown] = useMouseInput(useCallback(e => {
+        game.view = Math.min(700, Math.max(20, game.view + e.deltaY));
+    }, []));
     const [toasts, addToast] = useToast();
     const [chats, appendMessage] = useChat();
     const [socket, setSocket] = useState(null);
@@ -41,7 +44,9 @@ const Canvas = () => {
     useEffect(() => {
         if (!socket) {
             addToast({ message: 'Connecting to ' + process.env.REACT_APP_GAME_SERVER });
-            setSocket(io(process.env.REACT_APP_GAME_SERVER))
+            setSocket(io(process.env.REACT_APP_GAME_SERVER, {
+                upgrade: true
+            }))
             return;
         }
         socket.on('gameAlert', data => addToast({ message: data }));

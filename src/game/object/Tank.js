@@ -1,18 +1,22 @@
-import GameObject, { createObjectInfo } from ".";
+import GameObject from ".";
 import Weapon from "../weapon";
 import { radians } from "../maths";
 
-export const createTankInfo = info => ({
+const createTankInfo = info => ({
     movementSpeed: 50,
     reloadSpeed: 1,
     bulletSpeed: 100,
     bulletDamage: 1,
     bulletPenetration: 10,
     weaponType: 'singleCannon',
-    ...createObjectInfo(info)
+    ...info
 });
 
 export default class Tank extends GameObject {
+
+    constructor(info) {
+        super(createTankInfo(info));
+    }
 
     getData() {
         return {
@@ -38,9 +42,11 @@ export default class Tank extends GameObject {
         if (data.weapon) {
             this.weapon = new Weapon(this, data.weapon.type);
             this.weapon.setData(data.weapon);
-        } else {
-            this.weapon = new Weapon(this, data.weaponType);
-        }
+        } else this.setWeapon(data.weaponType);
+    }
+
+    setWeapon(weaponType) {
+        this.weapon = new Weapon(this, weaponType);
     }
 
     move(direction, deltaTime) {

@@ -1,10 +1,11 @@
 import { collision } from './collisions';
 import MiniMap from './huds/minimap';
-import { degree, different, pythagorean } from './maths';
-import GameObject, { createObjectInfo } from './object';
+import { degree, different } from './maths';
+import GameObject from './object';
 import CannonBall from './object/CannonBall';
 import RegularPolygon from './object/RegularPolygon';
 import Tank from './object/Tank';
+import WeaponBall from './object/WeaponBall';
 
 export default class Game {
 
@@ -59,16 +60,20 @@ export default class Game {
         const createObject = type => {
             switch (type) {
                 default:
-                case 'GameObject': return new GameObject({});
-                case 'RegularPolygon': return new RegularPolygon({});
-                case 'CannonBall': return new CannonBall({});
-                case 'Tank': return new Tank({});
+                case 'GameObject': return new GameObject();
+                case 'RegularPolygon': return new RegularPolygon();
+                case 'CannonBall': return new CannonBall();
+                case 'Tank': return new Tank();
+                case 'WeaponBall': return new WeaponBall();
             }
         };
         this.spawnList = [];
         this.objects = data.objects.map(objectData => {
             const object = createObject(objectData.objectType);
             object.setData(objectData);
+            if (object.objectId === this.playerId) {
+                object.rotate = +this.control.rotate;
+            }
             return object;
         });
         this.particles = data.particles.map(objectData => {
@@ -153,7 +158,7 @@ export default class Game {
 
     /**
      * Spawns obstacles.
-     * @param {number} [count] - Number of obstacles.
+     * @param {number} [count] - Number of obstacle.
      * @param {{min: number, max: number}} [vertices] - Range of random vertices.
      * @param {{min: number, max: number}} [radius] - Range of random radius.
      */
@@ -162,14 +167,23 @@ export default class Game {
         for (let i = 0; i < count; i++) {
             const randomRadius = Math.random() * (radius.max - radius.min) + radius.min;
             const randomVertices = Math.round(Math.random() * (vertices.max - vertices.min) + vertices.min);
-            this.spawn(new RegularPolygon(createObjectInfo({
+            this.spawn(new RegularPolygon({
                 radius: randomRadius,
                 color: colors[randomVertices % colors.length],
                 team: 'obstacle',
                 health: randomRadius * 5,
                 maxHealth: randomRadius * 5
-            }), randomVertices), true);
+            }, randomVertices), true);
         }
+    }
+
+    /**
+     * Spawns weapon balls.
+     * @param {number} [count] - Number of weapon ball.
+     */
+    spawnWeaponBalls(count = 20) {
+        for (let i = 0; i < count; i++)
+            this.spawn(new WeaponBall(), true);
     }
 
     update(deltaTime) {
@@ -220,10 +234,10 @@ export default class Game {
 
         // update camera
         if (this.focus) {
-            this.scale = pythagorean(this.canvas.width, this.canvas.height) / (this.view + this.focus.radius * 4);
             this.camera.x = this.focus.x;
             this.camera.y = this.focus.y;
         }
+        this.scale = Math.max(this.canvas.width, this.canvas.height) / this.view;
     }
 
     render() {

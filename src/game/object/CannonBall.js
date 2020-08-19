@@ -17,6 +17,10 @@ export default class CannonBall extends GameObject {
         this.ownerId = data.ownerId;
     }
 
+    getOwner(game) {
+        return game.objects.find(o => o.objectId === this.ownerId);
+    }
+
     differentTeam(otherObject) {
         return super.differentTeam(otherObject)
             && this.ownerId !== otherObject.objectId
