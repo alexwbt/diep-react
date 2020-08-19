@@ -43,7 +43,7 @@ const Canvas = () => {
 
     useEffect(() => {
         if (!socket) {
-            addToast({ message: 'Connecting to ' + process.env.REACT_APP_GAME_SERVER });
+            addToast({ message: 'Tryng to connected to ' + process.env.REACT_APP_GAME_SERVER });
             setSocket(io(process.env.REACT_APP_GAME_SERVER, {
                 upgrade: true
             }))
