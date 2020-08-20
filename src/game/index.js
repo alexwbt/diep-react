@@ -40,21 +40,17 @@ export default class Game {
         // minimap
         this.minimap = new MiniMap(this);
 
-        this.running = true;
         this.startTime = Date.now();
-        this.loop();
+        this.interval = setInterval(() => {
+            const now = Date.now();
+            const deltaTime = (now - this.startTime) / 1000;
+            this.startTime = now;
+            if (this.canvas) {
+                this.update(deltaTime, this);
+                this.render();
+            }
+        }, 1000 / 60);
     }
-
-    loop = () => {
-        const now = Date.now();
-        const deltaTime = (now - this.startTime) / 1000;
-        this.startTime = now;
-        if (this.canvas) {
-            this.update(deltaTime, this);
-            this.render();
-        }
-        this.running && window.requestAnimationFrame(this.loop);
-    };
 
     setData(data) {
         const createObject = type => {
@@ -106,10 +102,6 @@ export default class Game {
             this.player.weapon.fire(fire);
             this.control.firing = fire;
         }
-    }
-
-    stop() {
-        this.running = false;
     }
 
     /**
