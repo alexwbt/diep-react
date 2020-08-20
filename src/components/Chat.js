@@ -1,5 +1,7 @@
 import React, { useCallback, useRef, useState, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
+import { useSelector, useDispatch } from 'react-redux';
+import { socketEmit } from '../redux/actions/socketActions';
 
 const ChatContainer = styled.div`
     position: fixed;
@@ -59,9 +61,12 @@ const Message = styled.div`
     color: ${props => props.textColor};
 `;
 
-const Chat = ({ chats, onEnter, show }) => {
+const Chat = () => {
     const scroll = useRef(null);
     const [message, setMessage] = useState('');
+
+    const { show, chats } = useSelector(state => state.chat);
+    const dispatch = useDispatch();
 
     const changeHandle = useCallback(e => {
         setMessage(e.target.value);
@@ -69,14 +74,14 @@ const Chat = ({ chats, onEnter, show }) => {
 
     const keyDownHandle = useCallback(e => {
         if (message && e.key === 'Enter') {
-            onEnter(message);
+            socketEmit('chat', message)(dispatch);
             setMessage('');
         }
-    }, [message, setMessage, onEnter]);
+    }, [message, setMessage, dispatch]);
 
     useEffect(() => {
         if (show) scroll.current.scrollTop = scroll.current.scrollHeight;
-    }, [chats, scroll, show])
+    }, [chats, scroll, show]);
 
     return show && (
         <ChatContainer>

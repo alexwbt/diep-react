@@ -1,0 +1,20 @@
+
+export const showChat = show => dispatch => {
+    dispatch({ type: 'CHAT_SET_SHOW', show });
+};
+
+export const addChat = (message, options) => dispatch => {
+    const chat = {
+        message,
+        color: 'gray',
+        duration: 5000,
+        textColor: 'white',
+        fontWeight: 'normal',
+        ...options
+    };
+    dispatch({ type: 'CHAT_ADD', chat  });
+};
+
+export const clearChat = () => dispatch => {
+    dispatch({ type: 'CHAT_CLEAR' });
+};

@@ -2,9 +2,10 @@ import { useEffect, useReducer } from 'react';
 
 const useKeyInput = (keys, toggle = false) => {
     const [keyDown, setKeyDown] = useReducer((state, action) => {
+        if (!keys.includes(action.key)) return state;
         switch (action.type) {
             case 'keydown':
-                if (toggle) return state.map((down, i) => action.ctrlKey && action.key === keys[i] ? !down : down);
+                if (toggle) return action.ctrlKey ? state.map((down, i) => action.key === keys[i] ? !down : down) : state;
                 return state.map((down, i) => down ? down : action.key === keys[i]); 
             case 'keyup':
                 if (toggle) return state;
