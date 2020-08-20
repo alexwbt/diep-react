@@ -36,6 +36,7 @@ export default class Game {
         ];
         this.keyDown = [];
         this.control = {};
+        this.beforeControl = {};
 
         // minimap
         this.minimap = new MiniMap(this);
@@ -65,6 +66,10 @@ export default class Game {
         };
         this.spawnList = [];
         this.objects = data.objects.map(objectData => {
+            if (objectData.min) {
+                const o = this.objects.find(o => o.objectId === objectData.id);
+                if (o) return o;
+            }
             const object = createObject(objectData.objectType);
             object.setData(objectData);
             if (object.objectId === this.playerId) {
@@ -73,6 +78,7 @@ export default class Game {
             return object;
         });
         this.particles = data.particles.map(objectData => {
+            if (objectData.min) return this.particles.find(o => o.objectId === objectData.objectId);
             const object = createObject(objectData.objectType);
             object.setData(objectData);
             return object;
@@ -219,7 +225,14 @@ export default class Game {
                 this.player.move(this.control.movingDirection, deltaTime);
             } else this.player.stop();
 
-            if (this.socket) {
+            if ((this.control.firing !== this.beforeControl.firing
+                || this.control.rotate !== this.beforeControl.rotate
+                || this.control.moving !== this.beforeControl.moving
+                || this.control.movingDirection !== this.beforeControl.movingDirection) && this.socket) {
+                this.beforeControl.firing = this.control.firing;
+                this.beforeControl.rotate = this.control.rotate;
+                this.beforeControl.moving = this.control.moving;
+                this.beforeControl.movingDirection = this.control.movingDirection;
                 this.socket.emit('update', this.control);
             }
         }

@@ -61,6 +61,7 @@ const Connection = () => {
             addToast('Trying to connected to ' + gameServer)(dispatch);
             socketConnect(gameServer, getListeners(dispatch))(dispatch);
             socketEmit('setName', name)(dispatch);
+            socketEmit('initialUpdate')(dispatch);
             showConnection(false)(dispatch);
         }
     }, [name, gameServer, dispatch]);
