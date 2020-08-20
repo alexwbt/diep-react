@@ -65,11 +65,7 @@ export default class Game {
             }
         };
         this.spawnList = [];
-        this.objects = data.objects.map(objectData => {
-            if (objectData.min) {
-                const o = this.objects.find(o => o.objectId === objectData.id);
-                if (o) return o;
-            }
+        const newObjects = data.objects.map(objectData => {
             const object = createObject(objectData.objectType);
             object.setData(objectData);
             if (object.objectId === this.playerId) {
@@ -77,12 +73,20 @@ export default class Game {
             }
             return object;
         });
-        this.particles = data.particles.map(objectData => {
-            if (objectData.min) return this.particles.find(o => o.objectId === objectData.objectId);
-            const object = createObject(objectData.objectType);
-            object.setData(objectData);
-            return object;
-        });
+        if (data.objectIds) {
+            for (let i = 0; i < this.objects.length; i++) {
+                let contains = false;
+                data.objectIds = data.objectIds.filter(id => {
+                    const equal = id === this.objects[i].objectId;
+                    if (equal) contains = true;
+                    return !equal;
+                });
+                if (contains) newObjects.push(this.objects[i]);
+                // else if (!newObjects.find(o => o.objectId === this.objects[i].objectId))
+                //     this.spawnParticle(this.objects[i]);
+            }
+        }
+        this.objects = newObjects;
     }
 
     setCanvas(canvas) {
