@@ -119,6 +119,7 @@ export default class GameObject {
      */
     getData() {
         return [
+            this.objectId,
             this.x,
             this.y,
             this.rotate,
@@ -129,7 +130,7 @@ export default class GameObject {
     }
 
     setData(data) {
-        let i = 0;
+        let i = 1;
         this.x = data[i++];
         this.y = data[i++];
         this.rotate = data[i++];

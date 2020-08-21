@@ -74,29 +74,54 @@ export default class Game {
                 case TANK: return new Tank();
             }
         };
-        this.spawnList = [];
-        const newObjects = data.objects.map(objectData => {
-            const object = createObject(objectData.objectType);
-            object.setData(objectData);
-            if (object.objectId === this.playerId) {
-                object.rotate = this.control.rotate || 0;
-            }
-            return object;
-        });
-        if (data.objectIds) {
-            for (let i = 0; i < this.objects.length; i++) {
-                let contains = false;
-                data.objectIds = data.objectIds.filter(id => {
-                    const equal = id === this.objects[i].objectId;
-                    if (equal) contains = true;
-                    return !equal;
+        if (data.min) {
+            this.objects = this.objects.filter(o => {
+                let data = false;
+                data.objects = data.objects.filter(d => {
+                    if (d[0] === o.objectId) {
+                        data = d;
+                        return false;
+                    }
+                    return true;
                 });
-                if (contains) newObjects.push(this.objects[i]);
-                // else if (!newObjects.find(o => o.objectId === this.objects[i].objectId))
-                //     this.spawnParticle(this.objects[i]);
+                if (data) {
+                    o.setData(data);
+                    return true;
+                }
+                return false;
+            });
+            if (data.objects.length > 0 && this.socket) {
+                this.socket.emit('initialUpdate');
             }
+        } else {
+            this.objects = this.objects.filter(o => {
+                let hasData = false;
+                data.objects = data.objects.filter(d => {
+                    if (d[0] === o.objectId) {
+                        hasData = d;
+                        return false;
+                    }
+                    return true;
+                });
+                if (hasData) {
+                    o.setInfo(hasData);
+                    return true;
+                }
+                return false;
+            });
+            data.objects.forEach(data => {
+                const object = createObject(data[6]);
+                object.setInfo(data);
+                this.objects.push(object);
+            });
+            // this.objects = data.objects.map(objectData => {
+            //     const object = createObject(objectData[6]);
+            //     object.setInfo(objectData);
+            //     if (object.objectId === this.playerId)
+            //         object.rotate = this.control.rotate || 0;
+            //     return object;
+            // });
         }
-        this.objects = newObjects;
     }
 
     setCanvas(canvas) {

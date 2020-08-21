@@ -24,7 +24,7 @@ export default class WeaponBall extends GameObject {
 
     setInfo(info) {
         let i = super.setInfo(info);
-        this.setWeapon(i++);
+        this.setWeapon(info[i++]);
         return i;
     }
 
