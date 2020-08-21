@@ -1,6 +1,6 @@
 
 const initialState = {
-    show: false,
+    show: true,
     chats: []
 };
 

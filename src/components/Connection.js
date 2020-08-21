@@ -2,9 +2,8 @@ import React, { Fragment, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { showConnection } from '../redux/actions/connectionActions';
-import { socketConnect } from '../redux/actions/socketActions';
+import { socketConnect, socketDisconnect } from '../redux/actions/socketActions';
 import { addToast } from '../redux/actions/toastActions';
-import { getListeners } from '../Socket';
 import { socketEmit } from '../redux/actions/socketActions';
 
 const ConnectionContainer = styled.div`
@@ -39,11 +38,21 @@ const ConnectionLabel = styled.div`
     text-align: center;
 `;
 
-const Status = styled.div`
-    font: 12px consolas;
+const ConnectionButton = styled.button`
+    font: 20px consolas;
+    border: none;
+    border-radius: 10px;
+    background-color: ${props => props.color};
+    color: white;
+    margin: 5px;
+    padding: 3px 8px;
     position: fixed;
     right: 0;
     bottom: 0;
+    cursor: pointer;
+    :focus {
+        outline: none;
+    }
 `;
 
 const Connection = () => {
@@ -58,13 +67,22 @@ const Connection = () => {
 
     const keyHandler = useCallback((e) => {
         if (e.key === "Enter" && name && gameServer) {
-            addToast('Trying to connected to ' + gameServer)(dispatch);
-            socketConnect(gameServer, getListeners(dispatch))(dispatch);
-            socketEmit('setName', name)(dispatch);
-            socketEmit('initialUpdate')(dispatch);
-            showConnection(false)(dispatch);
+            dispatch(addToast('Trying to connected to ' + gameServer));
+            dispatch(socketConnect(gameServer));
+            dispatch(socketEmit('setName', name));
+            dispatch(socketEmit('initialUpdate'));
+            dispatch(showConnection(false));
         }
     }, [name, gameServer, dispatch]);
+
+    const onClickConnect = useCallback(() => {
+        dispatch(showConnection(!show));
+    }, [show, dispatch]);
+
+    const onClickDisconnect = useCallback(() => {
+        dispatch(socketDisconnect());
+    }, [dispatch]);
+
     return (
         <Fragment>
             {
@@ -75,7 +93,12 @@ const Connection = () => {
                     <Input value={gameServer} onChange={gameServerChangeHandler} onKeyDown={keyHandler} placeholder="game server" />
                 </ConnectionContainer>
             }
-            {connected && <Status>Connected to {gameServer}</Status>}
+            {
+                connected && <ConnectionButton color={'#cc5555'} onClick={onClickDisconnect}>Disconnect</ConnectionButton>
+            }
+            {
+                !connected && <ConnectionButton color={'#55cc99'} onClick={onClickConnect}>Connect</ConnectionButton>
+            }
         </Fragment>
     );
 };

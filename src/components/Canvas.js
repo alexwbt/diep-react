@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { game } from '../Game';
 
 const FixedCanvas = styled.canvas`
-    ${console.log}
     position: fixed;
 `;
 

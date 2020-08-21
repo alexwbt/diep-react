@@ -1,16 +1,17 @@
 import { closerThan, pythagorean } from './maths';
+import { CIRCLE, AABB, POLYGON } from './constants';
 
 export const collision = (object1, object2) => {
     switch (`${object1.shape}:${object2.shape}`) {
-        case 'circle:circle': return circleVsCircle(object1, object2);
-        case 'AABB:AABB': return aabbVsAABB(object1, object2);
-        case 'polygon:polygon': return polygonVsPolygon(object1.getVertices(), object2.getVertices());
+        case `${CIRCLE}:${CIRCLE}`: return circleVsCircle(object1, object2);
+        case `${AABB}:${AABB}`: return aabbVsAABB(object1, object2);
+        case `${POLYGON}:${POLYGON}`: return polygonVsPolygon(object1.getVertices(), object2.getVertices());
 
-        case 'circle:AABB': return circleVsAABB(object1, object2);
-        case 'AABB:circle': return circleVsAABB(object2, object1);
+        case `${CIRCLE}:${AABB}`: return circleVsAABB(object1, object2);
+        case `${AABB}:${CIRCLE}`: return circleVsAABB(object2, object1);
 
-        case 'circle:polygon': return circleVsPolygon(object1, object2.getVertices());
-        case 'polygon:circle': return circleVsPolygon(object2, object1.getVertices());
+        case `${CIRCLE}:${POLYGON}`: return circleVsPolygon(object1, object2.getVertices());
+        case `${POLYGON}:${CIRCLE}`: return circleVsPolygon(object2, object1.getVertices());
         default: return false;
     }
 };

@@ -1,6 +1,7 @@
 import { collision } from "../collisions";
 import { pythagorean, radians } from "../maths";
 import CannonBall from "../object/CannonBall";
+import { AABB } from "../constants";
 
 const createCannonInfo = info => ({
     x: 0,
@@ -88,8 +89,8 @@ export default class Cannon {
         });
         return {
             vertices: this.getVertices(game),
-            onScreen: collision({ shape: 'AABB', a, b }, {
-                shape: 'AABB',
+            onScreen: collision({ shape: AABB, a, b }, {
+                shape: AABB,
                 a: { x: 0, y: 0 },
                 b: { x: game.canvas.width, y: game.canvas.height }
             })

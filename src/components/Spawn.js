@@ -43,8 +43,8 @@ const Spawn = () => {
     const dispatch = useDispatch();
     
     const onSpawn = useCallback(() => {
-        socketEmit('spawnPlayer')(dispatch);
-        showSpawn(false)(dispatch);
+        dispatch(socketEmit('spawnPlayer'));
+        dispatch(showSpawn(false));
     }, [dispatch]);
 
     return show && (

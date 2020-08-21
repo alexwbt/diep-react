@@ -1,41 +1,41 @@
 import { collision } from "../collisions";
 import { different } from "../maths";
-import { CIRCLE, GAME_OBJECT, colorValue, color } from "../constants";
+import { CIRCLE, GAME_OBJECT, colorValue, color, defaultValue, AABB } from "../constants";
 
 export default class GameObject {
 
     constructor(initInfo) {
         if (initInfo) {
-            this.objectId = initInfo.objectId || 0;
-            this.x = initInfo.x || 0;
-            this.y = initInfo.y || 0;
-            this.radius = initInfo.radius || 10;
-            this.rotate = initInfo.rotate || 0;
-            this.shape = initInfo.shape || CIRCLE;
-            this.objectType = initInfo.objectType || GAME_OBJECT;
+            this.objectId = defaultValue(initInfo.objectId, 0);
+            this.x = defaultValue(initInfo.x, 0);
+            this.y = defaultValue(initInfo.y, 0);
+            this.radius = defaultValue(initInfo.radius, 10);
+            this.rotate = defaultValue(initInfo.rotate, 0);
+            this.shape = defaultValue(initInfo.shape, CIRCLE);
+            this.objectType = defaultValue(initInfo.objectType, GAME_OBJECT);
 
             // render
-            this.color = initInfo.color || '#00aaffff';
-            this.alpha = initInfo.alpha || 1;
-            this.borderColor = initInfo.borderColor || '#00000009';
-            this.borderWidth = initInfo.borderWidth || 0.1;
-            this.renderOnMap = initInfo.renderOnMap || true;
-            this.healthColor = initInfo.healthColor || '#00ff0099';
-            this.healthBarColor = initInfo.healthBarColor || '#00000099';
-            this.renderHealthBar = initInfo.renderHealthBar || true;
-            this.name = initInfo.name || '';
+            this.color = defaultValue(initInfo.color, '#00aaffff');
+            this.alpha = defaultValue(initInfo.alpha, 1);
+            this.borderColor = defaultValue(initInfo.borderColor, '#00000055');
+            this.borderWidth = defaultValue(initInfo.borderWidth, 0.1);
+            this.renderOnMap = defaultValue(initInfo.renderOnMap, true);
+            this.healthColor = defaultValue(initInfo.healthColor, '#00ff0099');
+            this.healthBarColor = defaultValue(initInfo.healthBarColor, '#00000099');
+            this.renderHealthBar = defaultValue(initInfo.renderHealthBar, true);
+            this.name = defaultValue(initInfo.name, '');
 
             // game
-            this.team = initInfo.team || 0;
-            this.health = initInfo.health || 100;
-            this.maxHealth = initInfo.maxHealth || 100;
-            this.bodyDamage = initInfo.bodyDamage || 1;
+            this.team = defaultValue(initInfo.team, 0);
+            this.health = defaultValue(initInfo.health, 100);
+            this.maxHealth = defaultValue(initInfo.maxHealth, 100);
+            this.bodyDamage = defaultValue(initInfo.bodyDamage, 1);
 
             // movement
-            this.movingDirection = initInfo.movingDirection || 0;
-            this.movingSpeed = initInfo.movingSpeed || 0;
-            this.momentumX = initInfo.momentumX || 0;
-            this.momentumY = initInfo.momentumY || 0;
+            this.movingDirection = defaultValue(initInfo.movingDirection, 0);
+            this.movingSpeed = defaultValue(initInfo.movingSpeed, 0);
+            this.momentumX = defaultValue(initInfo.momentumX, 0);
+            this.momentumY = defaultValue(initInfo.momentumY, 0);
         }
         this.forces = [];
         this.friction = 5;
@@ -143,8 +143,8 @@ export default class GameObject {
         const { x, y } = game.onScreen(this.x, this.y);
         const radius = this.radius * game.scale;
         return {
-            x, y, radius, onScreen: collision({ shape: 'circle', x, y, radius }, {
-                shape: 'AABB',
+            x, y, radius, onScreen: collision({ shape: CIRCLE, x, y, radius }, {
+                shape: AABB,
                 a: { x: 0, y: 0 },
                 b: { x: game.canvas.width, y: game.canvas.height }
             })
@@ -179,16 +179,16 @@ export default class GameObject {
 
     update(deltaTime) {
         this.forces.forEach(force => {
-            this.momentum.x += force.x;
-            this.momentum.y += force.y;
+            this.momentumX += force.x;
+            this.momentumY += force.y;
         });
         this.forces = [];
-        this.x += this.momentum.x * deltaTime;
-        this.y += this.momentum.y * deltaTime;
-        if (Math.abs(this.momentum.x) < 0.001) this.momentum.x = 0;
-        else this.momentum.x *= Math.pow(Math.E, -this.friction * deltaTime);
-        if (Math.abs(this.momentum.y) < 0.001) this.momentum.y = 0;
-        else this.momentum.y *= Math.pow(Math.E, -this.friction * deltaTime);
+        this.x += this.momentumX * deltaTime;
+        this.y += this.momentumY * deltaTime;
+        if (Math.abs(this.momentumX) < 0.001) this.momentumX = 0;
+        else this.momentumX *= Math.pow(Math.E, -this.friction * deltaTime);
+        if (Math.abs(this.momentumY) < 0.001) this.momentumY = 0;
+        else this.momentumY *= Math.pow(Math.E, -this.friction * deltaTime);
 
         this.x += Math.cos(this.movingDirection) * this.movingSpeed * deltaTime;
         this.y += Math.sin(this.movingDirection) * this.movingSpeed * deltaTime;

@@ -1,6 +1,6 @@
 import GameObject from '.';
 import { radians } from '../maths';
-import { POLYGON } from '../constants';
+import { POLYGON, defaultValue } from '../constants';
 
 export default class RegularPolygon extends GameObject {
 
@@ -10,7 +10,7 @@ export default class RegularPolygon extends GameObject {
             objectType: POLYGON
         });
         if (initInfo) {
-            this.vertices = initInfo.vertices || 3;
+            this.vertices = defaultValue(initInfo.vertices, 3);
         }
     }
 

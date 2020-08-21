@@ -1,16 +1,17 @@
 import GameObject from ".";
-import { CANNON_BALL } from "../constants";
+import { CANNON_BALL, defaultValue } from "../constants";
 
 export default class CannonBall extends GameObject {
 
     constructor(initInfo) {
         super({
             ...initInfo,
+            renderHealthBar: false,
             objectType: CANNON_BALL
         });
         if (initInfo) {
-            this.lifeTime = initInfo.lifeTime || 0;
-            this.ownerId = initInfo.ownerId || 0;
+            this.lifeTime = defaultValue(initInfo.lifeTime, 0);
+            this.ownerId = defaultValue(initInfo.ownerId, 0);
         }
     }
 

@@ -12,8 +12,8 @@ export const addToast = (message, options) => dispatch => {
         duration: 5000,
         ...options
     };
-    dispatch({ type: 'TOAST_ADD', toast  });
+    dispatch({ type: 'TOAST_ADD', toast });
     setTimeout(() => {
-        dispatch({ type: 'TOAST_REMOVE', toast  });
+        dispatch({ type: 'TOAST_REMOVE', toast });
     }, toast.duration);
 };

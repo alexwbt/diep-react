@@ -54,6 +54,15 @@ export default class Game {
         }, 1000 / 60);
     }
 
+    init() {
+        const player = new Tank({ x: 10, weaponType: 'twinCannon' });
+        player.objectId = 1;
+        this.playerId = 1;
+        this.spawn(player);
+        this.spawnWeaponBalls();
+        this.spawnObstacles();
+    }
+
     setData(data) {
         const createObject = type => {
             switch (type) {
@@ -110,7 +119,7 @@ export default class Game {
 
     fire(fire) {
         if (this.player) {
-            this.player.weapon.fire(fire);
+            this.player.weapon.firing = fire;
             this.control.firing = fire;
         }
     }
@@ -166,14 +175,14 @@ export default class Game {
      * @param {{min: number, max: number}} [radius] - Range of random radius.
      */
     spawnObstacles(count = 50, vertices = { min: 3, max: 5 }, radius = { min: 5, max: 20 }) {
-        const colors = ['orange', '#FF9', '#06f'];
+        const colors = ['#dd8800ff', '#ffff99ff', '#0066ffff'];
         for (let i = 0; i < count; i++) {
             const randomRadius = Math.random() * (radius.max - radius.min) + radius.min;
             const randomVertices = Math.round(Math.random() * (vertices.max - vertices.min) + vertices.min);
             this.spawn(new RegularPolygon({
                 radius: randomRadius,
                 color: colors[randomVertices % colors.length],
-                team: 'obstacle',
+                team: -1,
                 health: randomRadius * 5,
                 maxHealth: randomRadius * 5
             }, randomVertices), true);

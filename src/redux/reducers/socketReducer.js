@@ -17,6 +17,13 @@ const socketReducer = (state = null, action) => {
                 socket.on(listener.name, listener.callback);
             game.socket = socket;
             return socket;
+        case 'SOCKET_DISCONNECT':
+            setTimeout(() => {
+                state.close();
+                game.init();
+            }, 500);
+            game.socket = false;
+            return null;
         case 'SOCKET_EMIT':
             if (state && state.connected)
                 state.emit(action.name, action.data);

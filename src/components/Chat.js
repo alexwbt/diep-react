@@ -74,7 +74,7 @@ const Chat = () => {
 
     const keyDownHandle = useCallback(e => {
         if (message && e.key === 'Enter') {
-            socketEmit('chat', message)(dispatch);
+            dispatch(socketEmit('chat', message));
             setMessage('');
         }
     }, [message, setMessage, dispatch]);

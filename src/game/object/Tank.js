@@ -1,7 +1,7 @@
 import GameObject from ".";
 import Weapon from "../weapon";
 import { radians } from "../maths";
-import { TANK } from "../constants";
+import { TANK, defaultValue } from "../constants";
 
 export default class Tank extends GameObject {
 
@@ -11,12 +11,12 @@ export default class Tank extends GameObject {
             objectType: TANK
         });
         if (initInfo) {
-            this.movementSpeed = initInfo.movementSpeed || 50;
-            this.reloadSpeed = initInfo.reloadSpeed || 1;
-            this.bulletSpeed = initInfo.bulletSpeed || 100;
-            this.bulletDamage = initInfo.bulletDamage || 1;
-            this.bulletPenetration = initInfo.bulletPenetration || 10;
-            this.setWeapon(initInfo.weaponType || 'singleCannon');
+            this.movementSpeed = defaultValue(initInfo.movementSpeed, 50);
+            this.reloadSpeed = defaultValue(initInfo.reloadSpeed, 1);
+            this.bulletSpeed = defaultValue(initInfo.bulletSpeed, 100);
+            this.bulletDamage = defaultValue(initInfo.bulletDamage, 1);
+            this.bulletPenetration = defaultValue(initInfo.bulletPenetration, 10);
+            this.setWeapon(defaultValue(initInfo.weaponType, 'singleCannon'));
         }
     }
 

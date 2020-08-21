@@ -14,3 +14,7 @@ export const AABB = 3;
 // color
 export const color = value => '#' + value.toString(16).padStart(8, 0);
 export const colorValue = color => parseInt(color.replace(/#/, '0x'));
+
+// default value
+export const defaultValue = (value, defaultValue) =>
+    typeof value === 'undefined' ? defaultValue : value;
