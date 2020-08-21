@@ -1,112 +1,142 @@
 import { collision } from "../collisions";
 import { different } from "../maths";
-
-const createObjectInfo = info => ({
-    x: 0,
-    y: 0,
-    radius: 10,
-    rotate: 0,
-    shape: 'circle',
-
-    // render
-    color: '#0af',
-    alpha: 1,
-    borderColor: 'rgba(0, 0, 0, 0.3)',
-    borderWidth: 0.1,
-    renderOnMap: true,
-    healthColor: 'rgba(0, 255, 0, 0.5)',
-    healthBarColor: 'rgba(0, 0, 0, 0.5)',
-    renderHealthBar: true,
-
-    // game
-    team: 'self',
-    health: 100,
-    maxHealth: 100,
-    bodyDamage: 1,
-
-    // movement
-    movingDirection: 0,
-    movingSpeed: 0,
-    forces: [],
-    momentum: { x: 0, y: 0 },
-    friction: 5,
-
-    ...info
-});
+import { CIRCLE, GAME_OBJECT, colorValue, color } from "../constants";
 
 export default class GameObject {
 
-    constructor(info) {
-        this.setData(createObjectInfo(info));
-    }
-
-    getData() {
-        return {
-            x: this.x,
-            y: this.y,
-            radius: this.radius,
-            rotate: this.rotate,
-            shape: this.shape,
+    constructor(initInfo) {
+        if (initInfo) {
+            this.objectId = initInfo.objectId || 0;
+            this.x = initInfo.x || 0;
+            this.y = initInfo.y || 0;
+            this.radius = initInfo.radius || 10;
+            this.rotate = initInfo.rotate || 0;
+            this.shape = initInfo.shape || CIRCLE;
+            this.objectType = initInfo.objectType || GAME_OBJECT;
 
             // render
-            color: this.color,
-            alpha: this.alpha,
-            borderColor: this.borderColor,
-            borderWidth: this.borderWidth,
-            renderOnMap: this.renderOnMap,
-            healthColor: this.healthColor,
-            healthBarColor: this.healthBarColor,
-            renderHealthBar: this.renderHealthBar,
-            name: this.name,
+            this.color = initInfo.color || '#00aaffff';
+            this.alpha = initInfo.alpha || 1;
+            this.borderColor = initInfo.borderColor || '#00000009';
+            this.borderWidth = initInfo.borderWidth || 0.1;
+            this.renderOnMap = initInfo.renderOnMap || true;
+            this.healthColor = initInfo.healthColor || '#00ff0099';
+            this.healthBarColor = initInfo.healthBarColor || '#00000099';
+            this.renderHealthBar = initInfo.renderHealthBar || true;
+            this.name = initInfo.name || '';
 
             // game
-            team: this.team,
-            health: this.health,
-            maxHealth: this.maxHealth,
-            bodyDamage: this.bodyDamage,
+            this.team = initInfo.team || 0;
+            this.health = initInfo.health || 100;
+            this.maxHealth = initInfo.maxHealth || 100;
+            this.bodyDamage = initInfo.bodyDamage || 1;
 
             // movement
-            movingDirection: this.movingDirection,
-            movingSpeed: this.movingSpeed,
-            forces: this.forces,
-            momentum: this.momentum,
-            friction: this.friction,
-            objectId: this.objectId,
-            objectType: 'Object'
-        };
+            this.movingDirection = initInfo.movingDirection || 0;
+            this.movingSpeed = initInfo.movingSpeed || 0;
+            this.momentumX = initInfo.momentumX || 0;
+            this.momentumY = initInfo.momentumY || 0;
+        }
+        this.forces = [];
+        this.friction = 5;
+    }
+
+    /**
+     * Returns all object variables.
+     */
+    getInfo() {
+        return [
+            this.objectId,
+            this.x,
+            this.y,
+            this.radius,
+            this.rotate,
+            this.shape,
+            this.objectType,
+
+            // render
+            colorValue(this.color),
+            this.alpha,
+            colorValue(this.borderColor),
+            this.borderWidth,
+            this.renderOnMap,
+            colorValue(this.healthColor),
+            colorValue(this.healthBarColor),
+            this.renderHealthBar,
+            this.name,
+
+            // game
+            this.team,
+            this.health,
+            this.maxHealth,
+            this.bodyDamage,
+
+            // movement
+            this.movingDirection,
+            this.movingSpeed,
+            this.momentumX,
+            this.momentumY
+        ];
+    }
+
+    setInfo(info) {
+        let i = 0;
+        this.objectId = info[i++];
+        this.x = info[i++];
+        this.y = info[i++];
+        this.radius = info[i++];
+        this.rotate = info[i++];
+        this.shape = info[i++];
+        this.objectType = info[i++];
+
+        // render
+        this.color = color(info[i++]);
+        this.alpha = info[i++];
+        this.borderColor = color(info[i++]);
+        this.borderWidth = info[i++];
+        this.renderOnMap = info[i++];
+        this.healthColor = color(info[i++]);
+        this.healthBarColor = color(info[i++]);
+        this.renderHealthBar = info[i++];
+        this.name = info[i++];
+
+        // game
+        this.team = info[i++];
+        this.health = info[i++];
+        this.maxHealth = info[i++];
+        this.bodyDamage = info[i++];
+
+        // movement
+        this.movingDirection = info[i++];
+        this.movingSpeed = info[i++];
+        this.momentumX = info[i++];
+        this.momentumY = info[i++];
+        return i;
+    }
+
+    /**
+     * Returns object variables that changes frequently and unpredictably.
+     */
+    getData() {
+        return [
+            this.x,
+            this.y,
+            this.rotate,
+            this.health,
+            this.movingDirection,
+            this.movingSpeed
+        ];
     }
 
     setData(data) {
-        this.x = data.x;
-        this.y = data.y;
-        this.radius = data.radius;
-        this.rotate = data.rotate;
-        this.shape = data.shape;
-        this.objectId = data.objectId;
-
-        // render
-        this.color = data.color;
-        this.alpha = data.alpha;
-        this.borderColor = data.borderColor;
-        this.borderWidth = data.borderWidth;
-        this.renderOnMap = data.renderOnMap;
-        this.healthColor = data.healthColor;
-        this.healthBarColor = data.healthBarColor;
-        this.renderHealthBar = data.renderHealthBar;
-        this.name = data.name;
-
-        // game
-        this.team = data.team;
-        this.health = data.health;
-        this.maxHealth = data.maxHealth;
-        this.bodyDamage = data.bodyDamage;
-
-        // movement
-        this.movingDirection = data.movingDirection;
-        this.movingSpeed = data.movingSpeed;
-        this.forces = data.forces;
-        this.momentum = data.momentum;
-        this.friction = data.friction;
+        let i = 0;
+        this.x = data[i++];
+        this.y = data[i++];
+        this.rotate = data[i++];
+        this.health = data[i++];
+        this.movingDirection = data[i++];
+        this.movingSpeed = data[i++];
+        return i;
     }
 
     onScreen(game) {
@@ -130,7 +160,7 @@ export default class GameObject {
     }
 
     differentTeam(otherObject) {
-        return this.team !== otherObject.team || this.team === 'self';
+        return this.team !== otherObject.team || this.team === 0;
     }
 
     collide(otherObject) {
@@ -208,7 +238,7 @@ export default class GameObject {
         const radius = this.radius * map.scale;
         return {
             x, y, radius,
-            onMap: collision({ shape: 'circle', x, y, radius }, { shape: 'circle', x: map.x, y: map.y, radius: map.radius })
+            onMap: collision({ shape: CIRCLE, x, y, radius }, { shape: CIRCLE, x: map.x, y: map.y, radius: map.radius })
         };
     }
 

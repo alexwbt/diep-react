@@ -1,24 +1,31 @@
 import GameObject from ".";
+import { CANNON_BALL } from "../constants";
 
 export default class CannonBall extends GameObject {
 
-    getData() {
-        return {
-            ...super.getData(),
-            lifeTime: this.lifeTime,
-            ownerId: this.ownerId,
-            objectType: 'CannonBall'
-        };
+    constructor(initInfo) {
+        super({
+            ...initInfo,
+            objectType: CANNON_BALL
+        });
+        if (initInfo) {
+            this.lifeTime = initInfo.lifeTime || 0;
+            this.ownerId = initInfo.ownerId || 0;
+        }
     }
 
-    setData(data) {
-        super.setData(data);
-        this.lifeTime = data.lifeTime;
-        this.ownerId = data.ownerId;
+    getInfo() {
+        return super.getInfo().concat([
+            this.lifeTime,
+            this.ownerId
+        ]);
     }
 
-    getOwner(game) {
-        return game.objects.find(o => o.objectId === this.ownerId);
+    setInfo(info) {
+        let i = super.setInfo(info);
+        this.lifeTime = info[i++];
+        this.ownerId = info[i++];
+        return i;
     }
 
     differentTeam(otherObject) {

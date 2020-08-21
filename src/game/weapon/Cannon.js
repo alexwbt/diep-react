@@ -46,13 +46,13 @@ export default class Cannon {
         this.reloadCounter = 0;
     }
 
-    getData() {
-        return this.reloadCounter;
-    }
+    // getData() {
+    //     return this.reloadCounter;
+    // }
 
-    setData(data) {
-        this.reloadCounter = data;
-    }
+    // setData(data) {
+    //     this.reloadCounter = data;
+    // }
 
     getVertices(game, mod = 0) {
         const rotate = radians(this.owner.rotate) + this.rotate;

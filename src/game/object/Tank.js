@@ -1,51 +1,61 @@
 import GameObject from ".";
 import Weapon from "../weapon";
 import { radians } from "../maths";
-
-const createTankInfo = info => ({
-    movementSpeed: 50,
-    reloadSpeed: 1,
-    bulletSpeed: 100,
-    bulletDamage: 1,
-    bulletPenetration: 10,
-    weaponType: 'singleCannon',
-    ...info
-});
+import { TANK } from "../constants";
 
 export default class Tank extends GameObject {
 
-    constructor(info) {
-        super(createTankInfo(info));
+    constructor(initInfo) {
+        super({
+            ...initInfo,
+            objectType: TANK
+        });
+        if (initInfo) {
+            this.movementSpeed = initInfo.movementSpeed || 50;
+            this.reloadSpeed = initInfo.reloadSpeed || 1;
+            this.bulletSpeed = initInfo.bulletSpeed || 100;
+            this.bulletDamage = initInfo.bulletDamage || 1;
+            this.bulletPenetration = initInfo.bulletPenetration || 10;
+            this.setWeapon(initInfo.weaponType || 'singleCannon');
+        }
+    }
+
+    getInfo() {
+        return super.getInfo().concat([
+            this.movementSpeed,
+            this.reloadSpeed,
+            this.bulletSpeed,
+            this.bulletDamage,
+            this.bulletPenetration,
+            this.weaponType
+        ]);
+    }
+
+    setInfo(info) {
+        let i = super.setInfo(info);
+        this.movementSpeed = info[i++];
+        this.reloadSpeed = info[i++];
+        this.bulletSpeed = info[i++];
+        this.bulletDamage = info[i++];
+        this.bulletPenetration = info[i++];
+        this.setWeapon(info[i++]);
+        return i;
     }
 
     getData() {
-        return {
-            ...super.getData(),
-            movementSpeed: this.movementSpeed,
-            reloadSpeed: this.reloadSpeed,
-            bulletSpeed: this.bulletSpeed,
-            bulletDamage: this.bulletDamage,
-            bulletPenetration: this.bulletPenetration,
-            weapon: this.weapon.getData(),
-            objectType: 'Tank'
-        };
+        return super.getData().concat([
+            this.weapon.firing
+        ]);
     }
 
     setData(data) {
-        super.setData(data);
-        this.movementSpeed = data.movementSpeed;
-        this.reloadSpeed = data.reloadSpeed;
-        this.bulletSpeed = data.bulletSpeed;
-        this.bulletDamage = data.bulletDamage;
-        this.bulletPenetration = data.bulletPenetration;
-
-        if (data.weapon) {
-            this.weapon = new Weapon(this, data.weapon.type);
-            this.weapon.setData(data.weapon);
-        } else this.setWeapon(data.weaponType);
+        let i = super.setData(data);
+        this.weapon.firing = data[i++];
+        return i;
     }
 
     setWeapon(weaponType) {
+        this.weaponType = weaponType;
         this.weapon = new Weapon(this, weaponType);
     }
 

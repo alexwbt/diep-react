@@ -1,6 +1,7 @@
 import GameObject from '.';
 import Tank from './Tank';
 import { weaponList } from '../weapon';
+import { WEAPON_BALL } from '../constants';
 
 export default class WeaponBall extends GameObject {
 
@@ -10,22 +11,26 @@ export default class WeaponBall extends GameObject {
             health: 1,
             maxHealth: 1,
             bodyDamage: 0,
-            weaponBallType: weaponList[Math.floor(Math.random() * weaponList.length)].name
+            objectType: WEAPON_BALL
         });
+        this.setWeapon(weaponList[Math.floor(Math.random() * weaponList.length)].name);
     }
 
-    getData() {
-        return {
-            ...super.getData(),
-            weaponBallType: this.weaponBallType,
-            objectType: 'WeaponBall'
-        };
+    getInfo() {
+        return super.getInfo().concat([
+            this.weaponBallType
+        ]);
     }
 
-    setData(data) {
-        super.setData(data);
-        this.weaponBallType = data.weaponBallType;
-        this.weaponPreview = new Tank({ color: 'white', radius: this.radius * 0.4, weaponType: this.weaponBallType });
+    setInfo(info) {
+        let i = super.setInfo(info);
+        this.setWeapon(i++);
+        return i;
+    }
+
+    setWeapon(weaponType) {
+        this.weaponBallType = weaponType;
+        this.weaponPreview = new Tank({ color: 'white', radius: this.radius * 0.4, weaponType });
     }
 
     collide(otherObject) {

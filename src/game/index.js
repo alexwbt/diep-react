@@ -6,6 +6,7 @@ import CannonBall from './object/CannonBall';
 import RegularPolygon from './object/RegularPolygon';
 import Tank from './object/Tank';
 import WeaponBall from './object/WeaponBall';
+import { GAME_OBJECT, REGULAR_POLYGON, CANNON_BALL, TANK, WEAPON_BALL } from './constants';
 
 export default class Game {
 
@@ -57,11 +58,11 @@ export default class Game {
         const createObject = type => {
             switch (type) {
                 default:
-                case 'GameObject': return new GameObject();
-                case 'RegularPolygon': return new RegularPolygon();
-                case 'CannonBall': return new CannonBall();
-                case 'Tank': return new Tank();
-                case 'WeaponBall': return new WeaponBall();
+                case GAME_OBJECT: return new GameObject();
+                case REGULAR_POLYGON: return new RegularPolygon();
+                case CANNON_BALL: return new CannonBall();
+                case WEAPON_BALL: return new WeaponBall();
+                case TANK: return new Tank();
             }
         };
         this.spawnList = [];

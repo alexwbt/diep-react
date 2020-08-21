@@ -1,32 +1,29 @@
 import GameObject from '.';
 import { radians } from '../maths';
+import { POLYGON } from '../constants';
 
 export default class RegularPolygon extends GameObject {
 
-    /**
-     * RegularPolygon Constructor
-     * @param {*} info - Object info.
-     * @param {number} vertices - Number of vertices.
-     */
-    constructor(info, vertices) {
-        super(info);
-        this.shape = 'polygon';
-        this.vertices = vertices;
+    constructor(initInfo) {
+        super({
+            ...initInfo,
+            objectType: POLYGON
+        });
+        if (initInfo) {
+            this.vertices = initInfo.vertices || 3;
+        }
     }
 
-    getData() {
-        return {
-            ...super.getData(),
-            shape: 'polygon',
-            vertices: this.vertices,
-            objectType: 'RegularPolygon'
-        };
+    getInfo() {
+        return super.getInfo().concat([
+            this.vertices
+        ]);
     }
 
-    setData(data) {
-        super.setData(data);
-        this.shape = 'polygon';
-        this.vertices = data.vertices;
+    setInfo(info) {
+        let i = super.setInfo(info);
+        this.vertices = info[i++];
+        return i;
     }
 
     getVertices(game, radiusMultiply = 1) {
