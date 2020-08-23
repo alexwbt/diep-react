@@ -7,7 +7,7 @@ export default class WeaponBall extends GameObject {
 
     constructor() {
         super({
-            color: 'white',
+            color: '#ffffffff',
             health: 1,
             maxHealth: 1,
             bodyDamage: 0,
@@ -29,8 +29,10 @@ export default class WeaponBall extends GameObject {
     }
 
     setWeapon(weaponType) {
-        this.weaponBallType = weaponType;
-        this.weaponPreview = new Tank({ color: 'white', radius: this.radius * 0.4, weaponType });
+        if (this.weaponType !== weaponType) {
+            this.weaponBallType = weaponType;
+            this.weaponPreview = new Tank({ color: '#ffffffff', radius: this.radius * 0.4, weaponType });
+        }
     }
 
     collide(otherObject) {
@@ -49,6 +51,5 @@ export default class WeaponBall extends GameObject {
         this.weaponPreview.y = this.y;
         this.weaponPreview.render(ctx, game);
     }
-
 
 }

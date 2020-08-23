@@ -1,6 +1,6 @@
 
 const initialState = {
-    show: false,
+    show: true,
     name: '',
     server: '13.251.227.221'
 };

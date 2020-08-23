@@ -76,16 +76,16 @@ export default class Game {
         };
         if (data.min) {
             this.objects = this.objects.filter(o => {
-                let data = false;
+                let hasData = false;
                 data.objects = data.objects.filter(d => {
                     if (d[0] === o.objectId) {
-                        data = d;
+                        hasData = d;
                         return false;
                     }
                     return true;
                 });
-                if (data) {
-                    o.setData(data);
+                if (hasData) {
+                    o.setData(hasData);
                     return true;
                 }
                 return false;
@@ -180,6 +180,7 @@ export default class Game {
      * @param {number} [range] - Range of random location.
      */
     spawn(object, randomLocation, range = 1000) {
+        // if (this.socket) return;
         if (randomLocation) {
             object.x = Math.random() * range - range / 2;
             object.y = Math.random() * range - range / 2;
@@ -205,12 +206,13 @@ export default class Game {
             const randomRadius = Math.random() * (radius.max - radius.min) + radius.min;
             const randomVertices = Math.round(Math.random() * (vertices.max - vertices.min) + vertices.min);
             this.spawn(new RegularPolygon({
+                vertices: randomVertices,
                 radius: randomRadius,
                 color: colors[randomVertices % colors.length],
                 team: -1,
                 health: randomRadius * 5,
                 maxHealth: randomRadius * 5
-            }, randomVertices), true);
+            }), true);
         }
     }
 
