@@ -5,13 +5,13 @@ export const collision = (object1, object2) => {
     switch (`${object1.shape}:${object2.shape}`) {
         case `${CIRCLE}:${CIRCLE}`: return circleVsCircle(object1, object2);
         case `${AABB}:${AABB}`: return aabbVsAABB(object1, object2);
-        case `${POLYGON}:${POLYGON}`: return polygonVsPolygon(object1.getVertices(), object2.getVertices());
+        case `${POLYGON}:${POLYGON}`: return object1.getVertices && object2.getVertices && polygonVsPolygon(object1.getVertices(), object2.getVertices());
 
         case `${CIRCLE}:${AABB}`: return circleVsAABB(object1, object2);
         case `${AABB}:${CIRCLE}`: return circleVsAABB(object2, object1);
 
-        case `${CIRCLE}:${POLYGON}`: return circleVsPolygon(object1, object2.getVertices());
-        case `${POLYGON}:${CIRCLE}`: return circleVsPolygon(object2, object1.getVertices());
+        case `${CIRCLE}:${POLYGON}`: return object2.getVertices && circleVsPolygon(object1, object2.getVertices());
+        case `${POLYGON}:${CIRCLE}`: return object1.getVertices && circleVsPolygon(object2, object1.getVertices());
         default: return false;
     }
 };

@@ -79,7 +79,7 @@ export default class Game {
         };
         if (data.min) {
             this.objects = this.objects.filter(o => {
-                if (o.objectId === 0) return true;
+                if (o.objectId === 0) return false;
                 let hasData = false;
                 data.objects = data.objects.filter(d => {
                     if (d[0] === o.objectId) {
