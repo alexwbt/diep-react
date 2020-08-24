@@ -6,7 +6,7 @@ import CannonBall from './object/CannonBall';
 import RegularPolygon from './object/RegularPolygon';
 import Tank from './object/Tank';
 import WeaponBall from './object/WeaponBall';
-import { GAME_OBJECT, REGULAR_POLYGON, CANNON_BALL, TANK, WEAPON_BALL } from './constants';
+import { GAME_OBJECT, REGULAR_POLYGON, CANNON_BALL, TANK, WEAPON_BALL, HEAL_BALL } from './constants';
 import HealBall from './object/HealBall';
 
 export default class Game {
@@ -73,11 +73,13 @@ export default class Game {
                 case REGULAR_POLYGON: return new RegularPolygon();
                 case CANNON_BALL: return new CannonBall();
                 case WEAPON_BALL: return new WeaponBall();
+                case HEAL_BALL: return new HealBall();
                 case TANK: return new Tank();
             }
         };
         if (data.min) {
             this.objects = this.objects.filter(o => {
+                if (o.objectId === 0) return true;
                 let hasData = false;
                 data.objects = data.objects.filter(d => {
                     if (d[0] === o.objectId) {
@@ -97,6 +99,7 @@ export default class Game {
             }
         } else {
             this.objects = this.objects.filter(o => {
+                if (o.objectId === 0) return false;
                 let hasData = false;
                 data.objects = data.objects.filter(d => {
                     if (d[0] === o.objectId) {

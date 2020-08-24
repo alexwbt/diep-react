@@ -1,12 +1,13 @@
 import GameObject from '.';
 import { radians } from '../maths';
-import { REGULAR_POLYGON, defaultValue } from '../constants';
+import { REGULAR_POLYGON, defaultValue, POLYGON } from '../constants';
 
 export default class RegularPolygon extends GameObject {
 
     constructor(initInfo) {
         super({
             ...initInfo,
+            shape: POLYGON,
             objectType: REGULAR_POLYGON
         });
         if (initInfo) {
