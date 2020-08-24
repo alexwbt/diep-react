@@ -34,6 +34,12 @@ export const socketConnect = server => dispatch => {
                 }
             },
             {
+                name: 'playerRotate',
+                callback: data => {
+                    game.playerRotate.push(data);
+                }
+            },
+            {
                 name: 'connect',
                 callback: () => {
                     dispatch(addToast('Connected to server', { color: '#5d5' }));

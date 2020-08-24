@@ -7,6 +7,7 @@ import RegularPolygon from './object/RegularPolygon';
 import Tank from './object/Tank';
 import WeaponBall from './object/WeaponBall';
 import { GAME_OBJECT, REGULAR_POLYGON, CANNON_BALL, TANK, WEAPON_BALL } from './constants';
+import HealBall from './object/HealBall';
 
 export default class Game {
 
@@ -38,6 +39,7 @@ export default class Game {
         this.keyDown = [];
         this.control = {};
         this.beforeControl = {};
+        this.playerRotate = [];
 
         // minimap
         this.minimap = new MiniMap(this);
@@ -59,7 +61,7 @@ export default class Game {
         player.objectId = 1;
         this.playerId = 1;
         this.spawn(player);
-        this.spawnWeaponBalls();
+        this.spawnBalls();
         this.spawnObstacles();
     }
 
@@ -84,11 +86,11 @@ export default class Game {
                     }
                     return true;
                 });
-                if (hasData) {
+                if (hasData)
                     o.setData(hasData);
-                    return true;
-                }
-                return false;
+                if (o.objectId === this.playerId)
+                    o.rotate = this.control.rotate || 0;
+                return !!hasData;
             });
             if (data.objects.length > 0 && this.socket) {
                 this.socket.emit('initialUpdate');
@@ -103,15 +105,17 @@ export default class Game {
                     }
                     return true;
                 });
-                if (hasData) {
+                if (hasData)
                     o.setInfo(hasData);
-                    return true;
-                }
-                return false;
+                if (o.objectId === this.playerId)
+                    o.rotate = this.control.rotate || 0;
+                return !!hasData;
             });
             data.objects.forEach(data => {
                 const object = createObject(data[6]);
                 object.setInfo(data);
+                if (object.objectId === this.playerId)
+                    object.rotate = this.control.rotate || 0;
                 this.objects.push(object);
             });
             // this.objects = data.objects.map(objectData => {
@@ -217,12 +221,14 @@ export default class Game {
     }
 
     /**
-     * Spawns weapon balls.
-     * @param {number} [count] - Number of weapon ball.
+     * Spawns balls.
+     * @param {number} [count] - Number of balls.
      */
-    spawnWeaponBalls(count = 20) {
+    spawnBalls(count = 20) {
         for (let i = 0; i < count; i++)
             this.spawn(new WeaponBall(), true);
+        for (let i = 0; i < count; i++)
+            this.spawn(new HealBall(), true);
     }
 
     update(deltaTime) {
@@ -240,6 +246,14 @@ export default class Game {
             if (object.objectId === this.playerId && object instanceof Tank) {
                 this.player = object;
                 this.focus = object;
+            } else {
+                let hasRotate = false;
+                this.playerRotate = this.playerRotate.filter(r => {
+                    if (r[0] === object.objectId) hasRotate = r[1];
+                    return hasRotate !== false;
+                });
+                if (hasRotate !== false)
+                    object.rotate = hasRotate;
             }
             object.update(deltaTime, this);
             this.objects.forEach(otherObject => {

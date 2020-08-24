@@ -210,7 +210,7 @@ export default class GameObject {
 
     render(ctx, game) {
         const { x, y, radius, onScreen } = this.onScreen(game);
-        if (!onScreen) return;
+        if (!onScreen) return { x, y, radius, onScreen };
         ctx.globalAlpha = this.alpha;
 
         ctx.fillStyle = this.color;
@@ -233,6 +233,7 @@ export default class GameObject {
             ctx.fillText(this.name, x, y - radius * 1.5);
         }
         ctx.globalAlpha = 1;
+        return { x, y, radius, onScreen };
     }
 
     healthBarRender(ctx, x, y, radius) {
