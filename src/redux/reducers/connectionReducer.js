@@ -2,7 +2,7 @@
 const initialState = {
     show: true,
     name: '',
-    server: '13.251.227.221'
+    server: ''
 };
 
 const connectionReducer = (state = initialState, action) => {

@@ -101,36 +101,36 @@ export default class Game {
                 this.socket.emit('initialUpdate');
             }
         } else {
-            this.objects = this.objects.filter(o => {
-                if (o.objectId === 0) return false;
-                let hasData = false;
-                data.objects = data.objects.filter(d => {
-                    if (d[0] === o.objectId) {
-                        hasData = d;
-                        return false;
-                    }
-                    return true;
-                });
-                if (hasData)
-                    o.setInfo(hasData);
-                if (o.objectId === this.playerId)
-                    o.rotate = this.control.rotate || 0;
-                return !!hasData;
-            });
-            data.objects.forEach(data => {
-                const object = createObject(data[6]);
-                object.setInfo(data);
-                if (object.objectId === this.playerId)
-                    object.rotate = this.control.rotate || 0;
-                this.objects.push(object);
-            });
-            // this.objects = data.objects.map(objectData => {
-            //     const object = createObject(objectData[6]);
-            //     object.setInfo(objectData);
+            // this.objects = this.objects.filter(o => {
+            //     if (o.objectId === 0) return false;
+            //     let hasData = false;
+            //     data.objects = data.objects.filter(d => {
+            //         if (d[0] === o.objectId) {
+            //             hasData = d;
+            //             return false;
+            //         }
+            //         return true;
+            //     });
+            //     if (hasData)
+            //         o.setInfo(hasData);
+            //     if (o.objectId === this.playerId)
+            //         o.rotate = this.control.rotate || 0;
+            //     return !!hasData;
+            // });
+            // data.objects.forEach(data => {
+            //     const object = createObject(data[6]);
+            //     object.setInfo(data);
             //     if (object.objectId === this.playerId)
             //         object.rotate = this.control.rotate || 0;
-            //     return object;
+            //     this.objects.push(object);
             // });
+            this.objects = data.objects.map(objectData => {
+                const object = createObject(objectData[6]);
+                object.setInfo(objectData);
+                if (object.objectId === this.playerId)
+                    object.rotate = this.control.rotate || 0;
+                return object;
+            });
         }
     }
 

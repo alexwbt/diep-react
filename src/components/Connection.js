@@ -57,7 +57,7 @@ const ConnectionButton = styled.button`
 
 const Connection = () => {
     const [name, setName] = useState('');
-    const [gameServer, setGameServer] = useState('13.251.227.221');
+    const [gameServer, setGameServer] = useState(process.env.REACT_APP_DEFAULT_GAME_SERVER || '');
 
     const { show, connected } = useSelector(state => ({ show: state.connection.show, connected: state.socket?.connected }));
     const dispatch = useDispatch();
