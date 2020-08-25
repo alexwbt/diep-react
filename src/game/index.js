@@ -1,13 +1,14 @@
 import { collision } from './collisions';
+import { CANNON_BALL, GAME_OBJECT, HEAL_BALL, REGULAR_POLYGON, TANK, WEAPON_BALL, SHIELD_BALL } from './constants';
 import MiniMap from './huds/minimap';
 import { degree, different } from './maths';
 import GameObject from './object';
 import CannonBall from './object/CannonBall';
+import HealBall from './object/HealBall';
 import RegularPolygon from './object/RegularPolygon';
+import ShieldBall from './object/ShieldBall';
 import Tank from './object/Tank';
 import WeaponBall from './object/WeaponBall';
-import { GAME_OBJECT, REGULAR_POLYGON, CANNON_BALL, TANK, WEAPON_BALL, HEAL_BALL } from './constants';
-import HealBall from './object/HealBall';
 
 export default class Game {
 
@@ -75,6 +76,7 @@ export default class Game {
                 case CANNON_BALL: return new CannonBall();
                 case WEAPON_BALL: return new WeaponBall();
                 case HEAL_BALL: return new HealBall();
+                case SHIELD_BALL: return new ShieldBall();
                 case TANK: return new Tank();
             }
         };
@@ -233,6 +235,8 @@ export default class Game {
             this.spawn(new WeaponBall(), true);
         for (let i = 0; i < count; i++)
             this.spawn(new HealBall(), true);
+        for (let i = 0; i < count; i++)
+            this.spawn(new ShieldBall(), true);
     }
 
     update(deltaTime) {

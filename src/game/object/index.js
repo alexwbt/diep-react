@@ -105,6 +105,7 @@ export default class GameObject {
         this.healthBarColor = color(info[i++]);
         this.renderHealthBar = info[i++];
         this.name = info[i++];
+        this.shieldRadiusMod = info[i++];
 
         // game
         this.team = info[i++];
