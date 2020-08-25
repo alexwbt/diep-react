@@ -183,13 +183,14 @@ export default class GameObject {
     }
 
     collide(otherObject) {
-        const dif = different(otherObject, this);
-        this.addForce({
-            x: dif.x,
-            y: dif.y
-        });
-
-        if (this.differentTeam(otherObject) && otherObject.differentTeam(this)) {
+        if (otherObject) {
+            const dif = different(otherObject, this);
+            this.addForce({
+                x: dif.x,
+                y: dif.y
+            });
+        }
+        if (!otherObject || (this.differentTeam(otherObject) && otherObject.differentTeam(this))) {
             if (this.shield > 0) this.shield -= otherObject.bodyDamage
             else this.health -= otherObject.bodyDamage;
             if (this.health <= 0) this.removed = true;

@@ -24,6 +24,13 @@ export const collision = (object1, object2) => {
 const pointInCircle = (point, circle) => closerThan(point, circle, circle.radius);
 
 /**
+ * Returns true if circle1 is within circle2.
+ * @param {{x: number, y: number, radius: number}} point 
+ * @param {{x: number, y: number, radius: number}} circle 
+ */
+export const circleInCircle = (circle1, circle2) => closerThan(circle1, circle2, circle2.radius - circle1.radius);
+
+/**
  * Returns true if point is within polygon.
  * @param {{x: number, y: number}} point 
  * @param {{x: number, y: number}[]} polygon 

@@ -36,6 +36,15 @@ export default class MiniMap {
         // render objects
         this.game.objects.forEach(object => object.renderOnMap && object.mapRender(ctx, this));
 
+        // render border
+        ctx.fillStyle = 'rgba(200, 100, 100, 0.3)';
+        ctx.lineWidth = 10;
+        ctx.beginPath();
+        const { x, y } = this.onMap(0, 0);
+        ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+        ctx.arc(x, y, this.game.borderRadius * this.scale, 0, Math.PI * 2, true);
+        ctx.fill();
+
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
 

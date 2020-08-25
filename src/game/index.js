@@ -1,4 +1,4 @@
-import { collision } from './collisions';
+import { collision, circleInCircle } from './collisions';
 import { CANNON_BALL, GAME_OBJECT, HEAL_BALL, REGULAR_POLYGON, TANK, WEAPON_BALL, SHIELD_BALL } from './constants';
 import MiniMap from './huds/minimap';
 import { degree, different } from './maths';
@@ -23,6 +23,8 @@ export default class Game {
         this.spawnList = [];
         this.objects = [];
         this.particles = [];
+        this.borderRadius = 500;
+        this.borderSpeed = 0.05;
 
         // camera
         this.scale = 1;
@@ -80,6 +82,7 @@ export default class Game {
                 case TANK: return new Tank();
             }
         };
+        this.borderRadius = data.br;
         if (data.min) {
             this.objects = this.objects.filter(o => {
                 if (o.objectId === 0) return false;
@@ -264,10 +267,16 @@ export default class Game {
                     object.rotate = hasRotate;
             }
             object.update(deltaTime, this);
+            const objShape = object.getShape();
             this.objects.forEach(otherObject => {
-                if (otherObject !== object && collision(object.getShape(), otherObject.getShape()))
+                if (otherObject !== object && collision(objShape, otherObject.getShape()))
                     object.collide(otherObject);
             });
+            if (!circleInCircle(objShape, { x: 0, y: 0, radius: this.borderRadius })) {
+                object.addForce({ x: -object.x, y: -object.y });
+                object.health -= 10;
+                if (object.health <= 0) object.removed = true;
+            }
             if (object.removed)
                 this.spawnParticle(object);
             return !object.removed;
@@ -340,6 +349,20 @@ export default class Game {
         // render objects and particles
         this.objects.forEach(object => object.render(this.ctx, this));
         this.particles.forEach(particle => particle.render(this.ctx, this));
+
+        // render border
+        this.ctx.fillStyle = 'rgba(200, 100, 100, 0.5)';
+        this.ctx.lineWidth = 10;
+        this.ctx.beginPath();
+        const { x, y } = this.onScreen(0, 0);
+        this.ctx.arc(x, y, this.borderRadius * this.scale, 0, Math.PI * 2);
+        this.ctx.rect(this.canvas.width, 0, -this.canvas.width, this.canvas.height);
+        this.ctx.fill();
+
+        this.ctx.strokeStyle = 'rgb(200, 100, 100)';
+        this.ctx.beginPath();
+        this.ctx.arc(x, y, this.borderRadius * this.scale, 0, Math.PI * 2);
+        this.ctx.stroke();
 
         this.minimap.render(this.ctx);
     }
