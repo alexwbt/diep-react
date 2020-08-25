@@ -31,7 +31,7 @@ export default class WeaponBall extends GameObject {
     setWeapon(weaponType) {
         if (this.weaponType !== weaponType) {
             this.weaponBallType = weaponType;
-            this.weaponPreview = new Tank({ color: '#ffffffff', radius: this.radius * 0.4, weaponType });
+            this.weaponPreview = new Tank({ color: '#ffffffff', radius: this.radius * 0.4, shield: 0, weaponType });
         }
     }
 

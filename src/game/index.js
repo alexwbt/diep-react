@@ -60,6 +60,7 @@ export default class Game {
         const player = new Tank({ x: 10, weaponType: 'twinCannon' });
         player.objectId = 1;
         this.playerId = 1;
+        this.objects = [];
         this.spawn(player);
         this.spawnBalls();
         this.spawnObstacles();
@@ -260,7 +261,7 @@ export default class Game {
             }
             object.update(deltaTime, this);
             this.objects.forEach(otherObject => {
-                if (otherObject !== object && collision(object, otherObject))
+                if (otherObject !== object && collision(object.getShape(), otherObject.getShape()))
                     object.collide(otherObject);
             });
             if (object.removed)

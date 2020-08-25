@@ -7,6 +7,7 @@ export default class Tank extends GameObject {
 
     constructor(initInfo) {
         super({
+            shield: 10,
             ...initInfo,
             objectType: TANK
         });
@@ -108,8 +109,6 @@ export default class Tank extends GameObject {
         ctx.beginPath();
         ctx.arc(x, y, radius, 0, 2 * Math.PI);
         ctx.fill();
-
-
 
         let dir = radians(this.rotate);
         ctx.beginPath();
