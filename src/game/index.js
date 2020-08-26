@@ -23,7 +23,8 @@ export default class Game {
         this.spawnList = [];
         this.objects = [];
         this.particles = [];
-        this.borderRadius = 500;
+        this.minBorderRadius = 100;
+        this.borderRadius = 2000;
         this.borderSpeed = 0.05;
 
         // camera
@@ -191,14 +192,18 @@ export default class Game {
      * @param {*} object 
      * @param {boolean} [randomLocation] - Spawn in random location.
      * @param {number} [range] - Range of random location.
+     * @param {number} [minRange] - Minimum range of random location.
      */
-    spawn(object, randomLocation, range = 1000) {
-        // if (this.socket) return;
+    spawn(object, randomLocation, range, minRange = 0) {
+        if (!range) range = this.borderRadius - object.radius - 10;
         if (randomLocation) {
-            object.x = Math.random() * range - range / 2;
-            object.y = Math.random() * range - range / 2;
+            const randomDirection = Math.random() * Math.PI * 2;
+            const randomRange = Math.random() * (range - minRange) + minRange;
+            object.x = Math.cos(randomDirection) * randomRange;
+            object.y = Math.sin(randomDirection) * randomRange;
         }
         this.spawnList.push(object);
+        return object.objectId;
     }
 
     spawnParticle(particle) {
@@ -254,7 +259,7 @@ export default class Game {
         this.objects = this.objects.concat(this.spawnList);
         this.spawnList = [];
         this.objects = this.objects.filter(object => {
-            if (object.objectId === this.playerId && object instanceof Tank) {
+            if (this.playerId !== 0 && object.objectId === this.playerId && object.objectType === TANK) {
                 this.player = object;
                 this.focus = object;
             } else {
@@ -263,34 +268,47 @@ export default class Game {
                     if (r[0] === object.objectId) hasRotate = r[1];
                     return hasRotate !== false;
                 });
-                if (hasRotate !== false)
-                    object.rotate = hasRotate;
+                if (hasRotate !== false) object.rotate = hasRotate;
             }
             object.update(deltaTime, this);
-            const objShape = object.getShape();
+            // border
+            if (!circleInCircle(object, { x: 0, y: 0, radius: this.borderRadius })) {
+                switch (object.objectType) {
+                    case TANK:
+                        object.health -= this.minBorderRadius / this.borderRadius;
+                        if (object.health <= 0) object.removed = true;
+                        break;
+                    default:
+                        const dir = Math.atan2(-object.y, -object.x);
+                        object.addForce({ x: Math.cos(dir) * 500, y: Math.sin(dir) * 500 });
+                        object.removed = true;
+                }
+            }
+            // collision
             this.objects.forEach(otherObject => {
-                if (otherObject !== object && collision(objShape, otherObject.getShape()))
+                if (otherObject !== object && collision(object.getShape(), otherObject.getShape()))
                     object.collide(otherObject);
             });
-            if (!circleInCircle(objShape, { x: 0, y: 0, radius: this.borderRadius })) {
-                object.addForce({ x: -object.x, y: -object.y });
-                object.health -= 10;
-                if (object.health <= 0) object.removed = true;
-            }
             if (object.removed)
                 this.spawnParticle(object);
             return !object.removed;
         });
 
         // update input
-        if (this.player) {
-            const input = { x: 0, y: 0 };
-            for (let i = 0; i < this.keyDown.length; i++) {
-                if (this.keyDown[i]) {
-                    input.x += this.keyMap[i].x;
-                    input.y += this.keyMap[i].y;
-                }
+        if (this.playerId === 0) {
+            this.player = false;
+            this.focus = false;
+        }
+
+        const input = { x: 0, y: 0 };
+        for (let i = 0; i < this.keyDown.length; i++) {
+            if (this.keyDown[i]) {
+                input.x += this.keyMap[i].x;
+                input.y += this.keyMap[i].y;
             }
+        }
+
+        if (this.player) {
             this.control.moving = input.x !== 0 || input.y !== 0;
             if (this.control.moving) {
                 this.control.movingDirection = Math.atan2(input.y, input.x);
@@ -308,11 +326,12 @@ export default class Game {
                 this.socket.emit('update', this.control);
             }
         }
-
-        // update camera
         if (this.focus) {
             this.camera.x = this.focus.x;
             this.camera.y = this.focus.y;
+        } else {
+            this.camera.x += input.x * 5;
+            this.camera.y += input.y * 5;
         }
         this.scale = Math.max(this.canvas.width, this.canvas.height) / this.view;
     }
@@ -352,16 +371,17 @@ export default class Game {
 
         // render border
         this.ctx.fillStyle = 'rgba(200, 100, 100, 0.5)';
-        this.ctx.lineWidth = 10;
         this.ctx.beginPath();
         const { x, y } = this.onScreen(0, 0);
-        this.ctx.arc(x, y, this.borderRadius * this.scale, 0, Math.PI * 2);
-        this.ctx.rect(this.canvas.width, 0, -this.canvas.width, this.canvas.height);
+        const borderRadius = this.borderRadius * this.scale;
+        this.ctx.rect(0, 0, W, H);
+        this.ctx.arc(x, y, borderRadius, 0, Math.PI * 2, true);
         this.ctx.fill();
 
         this.ctx.strokeStyle = 'rgb(200, 100, 100)';
+        this.ctx.lineWidth = 10 * this.scale;
         this.ctx.beginPath();
-        this.ctx.arc(x, y, this.borderRadius * this.scale, 0, Math.PI * 2);
+        this.ctx.arc(x, y, borderRadius, 0, Math.PI * 2);
         this.ctx.stroke();
 
         this.minimap.render(this.ctx);

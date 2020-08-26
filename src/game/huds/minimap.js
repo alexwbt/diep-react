@@ -24,6 +24,7 @@ export default class MiniMap {
     render(ctx) {
         ctx.globalAlpha = this.alpha;
 
+        ctx.save();
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
         ctx.clip();
@@ -60,6 +61,8 @@ export default class MiniMap {
             ctx.lineTo(this.x + Math.cos(d) * this.radius * 0.95, this.y + Math.sin(d) * this.radius * 0.95);
             ctx.stroke();
         }
+
+        ctx.restore();
     }
 
 }

@@ -7,7 +7,6 @@ export default class Tank extends GameObject {
 
     constructor(initInfo) {
         super({
-            shield: 10,
             ...initInfo,
             objectType: TANK
         });
@@ -97,7 +96,7 @@ export default class Tank extends GameObject {
     render(ctx, game) {
         ctx.globalAlpha = this.alpha;
         this.weapon.render(ctx, game);
-        ctx.globalAlpha = 0;
+        ctx.globalAlpha = 1;
         super.render(ctx, game);
     }
 
