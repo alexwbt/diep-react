@@ -7,14 +7,13 @@ export const addChat = (message, options) => dispatch => {
     const chat = {
         message,
         color: 'gray',
-        duration: 5000,
+        duration: 1000 * 60,
         textColor: 'white',
         fontWeight: 'normal',
         ...options
     };
     dispatch({ type: 'CHAT_ADD', chat  });
-};
-
-export const clearChat = () => dispatch => {
-    dispatch({ type: 'CHAT_CLEAR' });
+    setTimeout(() => {
+        dispatch({ type: 'CHAT_REMOVE', chat });
+    }, chat.duration);
 };

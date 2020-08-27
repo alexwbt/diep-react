@@ -3,6 +3,9 @@ import { addChat } from "../../redux/actions/chatActions";
 import { showConnection } from "../../redux/actions/connectionActions";
 import { showSpawn, setMessage } from "../../redux/actions/spawnActions";
 import { addToast } from "../../redux/actions/toastActions";
+import { leaderBoardSetPlayers } from './leaderBoardActions';
+
+let countdownInterval;
 
 export const socketConnect = server => dispatch => {
     game.playerId = 0;
@@ -64,24 +67,49 @@ export const socketConnect = server => dispatch => {
                 name: 'killAlert',
                 callback: ({ killed, killedBy, killedId }) => {
                     dispatch(addToast(`${killed}${killedBy ? ` was killed by ${killedBy}` : ' died'}`));
-                    if (game.player && killedId === game.playerId) dispatch(showSpawn(true));
+                    if (game.player && killedId === game.playerId) {
+                        game.playerId = 0;
+                        dispatch(setMessage('You died.'));
+                        dispatch(showSpawn(true));
+                    }
                 }
             },
             {
                 name: 'startCountdown',
                 callback: (countdown) => {
                     dispatch(addToast(`Game is starting in ${countdown} seconds`));
-                    const interval = setInterval(() => {
+                    if (countdownInterval) clearInterval(countdownInterval);
+                    countdownInterval = setInterval(() => {
                         dispatch(addToast(--countdown, { duration: 1000 }));
-                        if (countdown <= 0) clearInterval(interval);
+                        if (countdown <= 0) {
+                            clearInterval(countdownInterval);
+                            dispatch(addToast(`Game started!! Good luck`));
+                            dispatch(showSpawn(false));
+                        }
                     }, 1000);
+                }
+            },
+            {
+                name: 'stopCountdown',
+                callback: () => {
+                    if (countdownInterval) {
+                        clearInterval(countdownInterval);
+                        dispatch(addToast('Countdown stopped. Not enough player'))
+                    }
                 }
             },
             {
                 name: 'gameEnded',
                 callback: ({ winner }) => {
-                    dispatch(setMessage(winner + ' won!!!'));
+                    dispatch(setMessage(winner ? winner + ' won!!!' : 'Game Ended'));
                     dispatch(showSpawn(true));
+                    game.playerId = 0;
+                }
+            },
+            {
+                name: 'alivePlayers',
+                callback: players => {
+                    dispatch(leaderBoardSetPlayers(players));
                 }
             }
         ]
@@ -94,4 +122,13 @@ export const socketEmit = (name, data) => dispatch => {
 
 export const socketDisconnect = () => dispatch => {
     dispatch({ type: 'SOCKET_DISCONNECT' });
+};
+
+export const socketReconnect = () => (dispatch, getState) => {
+    const { name, server } = getState().connection;
+    dispatch(socketDisconnect());
+    setTimeout(() => dispatch(socketConnect(server)), 100);
+    dispatch(socketEmit('setName', name));
+    dispatch(socketEmit('initialUpdate'));
+    dispatch(showConnection(false));
 };

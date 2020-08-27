@@ -1,28 +1,28 @@
 
 const initialState = {
     show: true,
-    chats: []
+    players: []
 };
 
-const chatReducer = (state = initialState, action) => {
+const leaderBoardReducer = (state = initialState, action) => {
     switch (action.type) {
-        case 'CHAT_SET_SHOW':
+        case 'LEADER_BOARD_SET_SHOW':
             return {
                 ...state,
                 show: action.show
-            }
-        case 'CHAT_ADD':
-            return {
-                ...state,
-                chats: state.chats.concat(action.chat)
             };
-        case 'CHAT_REMOVE':
+        case 'LEADER_BOARD_SET_PLAYERS':
             return {
                 ...state,
-                chats: state.chats.filter(c => c !== action.chat)
+                players: action.players
+            };
+        case 'LEADER_BOARD_CLEAR':
+            return {
+                ...state,
+                players: []
             };
         default: return state;
     }
 };
 
-export default chatReducer;
+export default leaderBoardReducer;

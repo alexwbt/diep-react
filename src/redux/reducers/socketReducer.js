@@ -21,7 +21,7 @@ const socketReducer = (state = null, action) => {
             setTimeout(() => {
                 state.close();
                 game.init();
-            }, 500);
+            }, 100);
             game.socket = false;
             return null;
         case 'SOCKET_EMIT':

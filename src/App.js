@@ -8,6 +8,7 @@ import rootReducer from './redux/reducers/rootReducer';
 import Toaster from './components/Toast';
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
+import LeaderBoard from './components/LeaderBoard';
 
 const store = createStore(rootReducer, applyMiddleware(thunk));
 
@@ -21,6 +22,7 @@ const App = () => {
                 <Chat />
                 <Connection />
                 <Spawn />
+                <LeaderBoard />
             </Provider>
         </React.StrictMode>
     );

@@ -262,6 +262,7 @@ export default class Game {
             if (this.playerId !== 0 && object.objectId === this.playerId && object.objectType === TANK) {
                 this.player = object;
                 this.focus = object;
+                if (this.view > 700) this.view = 500;
             } else {
                 let hasRotate = false;
                 this.playerRotate = this.playerRotate.filter(r => {

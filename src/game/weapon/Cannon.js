@@ -112,7 +112,7 @@ export default class Cannon {
                 x: this.owner.x + Math.cos(dir) * mag,
                 y: this.owner.y + Math.sin(dir) * mag,
                 radius,
-                color: '#ff0000ff',
+                color: this.owner.team === 0 ? '#ff0000ff' : this.owner.color,
                 borderWidth: 0.5,
                 renderHealthBar: false,
                 renderOnMap: false,

@@ -15,7 +15,7 @@ const Canvas = () => {
         const moveHandler = e => game.setMouse({ x: e.x, y: e.y });
         const mouseDownHandler = () => game.fire(true);
         const mouseUpHandler = () => game.fire(false);
-        const mouseWheelHandler = e => game.view = Math.min(game.playerId === 0 ? 2000 : 700, Math.max(20, game.view + e.deltaY));
+        const mouseWheelHandler = e => game.view = Math.min(game.playerId === 0 ? 4000 : 700, Math.max(20, game.view + e.deltaY));
         window.addEventListener('mousemove', moveHandler);
         window.addEventListener('mousedown', mouseDownHandler);
         window.addEventListener('mouseup', mouseUpHandler);

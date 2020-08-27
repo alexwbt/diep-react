@@ -1,7 +1,7 @@
 import React, { Fragment, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { showConnection } from '../redux/actions/connectionActions';
+import { showConnection, setConnectionServer, setConnectionName } from '../redux/actions/connectionActions';
 import { socketConnect, socketDisconnect } from '../redux/actions/socketActions';
 import { addToast } from '../redux/actions/toastActions';
 import { socketEmit } from '../redux/actions/socketActions';
@@ -72,6 +72,8 @@ const Connection = () => {
             dispatch(socketEmit('setName', name));
             dispatch(socketEmit('initialUpdate'));
             dispatch(showConnection(false));
+            dispatch(setConnectionName(name));
+            dispatch(setConnectionServer(gameServer));
         }
     }, [name, gameServer, dispatch]);
 
@@ -88,7 +90,7 @@ const Connection = () => {
             {
                 show && <ConnectionContainer>
                     <ConnectionLabel>Enter your name</ConnectionLabel>
-                    <Input value={name} onChange={nameChangeHandler} onKeyDown={keyHandler} maxLength={10} placeholder="name" />
+                    <Input value={name} onChange={nameChangeHandler} onKeyDown={keyHandler} maxLength={20} placeholder="name" />
                     <ConnectionLabel>Connecting to</ConnectionLabel>
                     <Input value={gameServer} onChange={gameServerChangeHandler} onKeyDown={keyHandler} placeholder="game server" />
                 </ConnectionContainer>
