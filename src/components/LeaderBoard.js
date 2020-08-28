@@ -8,21 +8,21 @@ const Container = styled.div`
     top: 0;
     padding: 10px;
     font: 20px consolas;
+    text-align: center;
 `;
 
-const Player = styled.div`
-    
+const Head = styled.div`
+    border-bottom: 2px solid black;
+    padding: 0 10px;
 `;
 
 const LeaderBoard = () => {
     const { show, players } = useSelector(state => state.leaderBoard);
     return show && (
         <Container>
-            Alive Players
+            <Head>Alive Players</Head>
             {
-                players.map((player, i) => <div>
-                    <Player>{player.name}</Player>
-                </div>)
+                players.map((player, i) => <div key={i}>{player.name}</div>)
             }
         </Container>
     );

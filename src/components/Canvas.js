@@ -32,10 +32,16 @@ const Canvas = () => {
     useEffect(() => {
         const set = new Set();
         const controls = ['w', 'a', 's', 'd'];
-        const update = () => game.setKeyDown(controls.map(k => set.has(k)));
+        const toggleKeys = new Set();
+        const update = () => {
+            game.setKeyDown(controls.map(k => set.has(k)));
+            game.minimap.hide = toggleKeys.has('m');
+        };
         const keyDownHandler = e => {
             if (!e.repeat) {
                 set.add(e.key);
+                if (toggleKeys.has(e.key)) toggleKeys.delete(e.key);
+                else toggleKeys.add(e.key);
                 update();
             }
         };

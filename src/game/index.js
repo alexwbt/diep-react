@@ -302,7 +302,7 @@ export default class Game {
         }
 
         const input = { x: 0, y: 0 };
-        for (let i = 0; i < this.keyDown.length; i++) {
+        for (let i = 0; i < this.keyMap.length; i++) {
             if (this.keyDown[i]) {
                 input.x += this.keyMap[i].x;
                 input.y += this.keyMap[i].y;

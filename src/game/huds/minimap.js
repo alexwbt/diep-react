@@ -12,6 +12,8 @@ export default class MiniMap {
         this.backgroundColor = '#eee';
         this.borderColor = '#555';
         this.alpha = 0.9;
+
+        this.hide = false;
     }
 
     onMap(x, y) {
@@ -22,6 +24,7 @@ export default class MiniMap {
     }
 
     render(ctx) {
+        if (this.hide) return;
         ctx.globalAlpha = this.alpha;
 
         ctx.save();
