@@ -1,5 +1,5 @@
 import { collision, circleInCircle } from './collisions';
-import { CANNON_BALL, GAME_OBJECT, HEAL_BALL, REGULAR_POLYGON, TANK, WEAPON_BALL, SHIELD_BALL } from './constants';
+import { CANNON_BALL, GAME_OBJECT, HEAL_BALL, REGULAR_POLYGON, TANK, WEAPON_BALL, SHIELD_BALL, BUSH } from './constants';
 import MiniMap from './huds/minimap';
 import { degree, different } from './maths';
 import GameObject from './object';
@@ -9,6 +9,7 @@ import RegularPolygon from './object/RegularPolygon';
 import ShieldBall from './object/ShieldBall';
 import Tank from './object/Tank';
 import WeaponBall from './object/WeaponBall';
+import Bush from './object/Bush';
 
 export default class Game {
 
@@ -68,6 +69,7 @@ export default class Game {
         this.spawn(player);
         this.spawnBalls();
         this.spawnObstacles();
+        this.spawnBushes();
     }
 
     setData(data) {
@@ -81,6 +83,7 @@ export default class Game {
                 case HEAL_BALL: return new HealBall();
                 case SHIELD_BALL: return new ShieldBall();
                 case TANK: return new Tank();
+                case BUSH: return new Bush();
             }
         };
         this.borderRadius = data.br;
@@ -133,6 +136,11 @@ export default class Game {
                 object.setInfo(objectData);
                 if (object.objectId === this.playerId)
                     object.rotate = this.control.rotate || 0;
+                return object;
+            });
+            this.particles = data.particles.map(objectData => {
+                const object = createObject(objectData[6]);
+                object.setInfo(objectData);
                 return object;
             });
         }
@@ -206,9 +214,17 @@ export default class Game {
         return object.objectId;
     }
 
-    spawnParticle(particle) {
+    spawnParticle(particle, randomLocation, range, minRange = 0, fadeOverTime = true) {
+        if (!range) range = this.borderRadius - particle.radius - 10;
+        if (randomLocation) {
+            const randomDirection = Math.random() * Math.PI * 2;
+            const randomRange = Math.random() * (range - minRange) + minRange;
+            particle.x = Math.cos(randomDirection) * randomRange;
+            particle.y = Math.sin(randomDirection) * randomRange;
+        }
         particle.renderHealthBar = false;
         particle.alpha = 1;
+        particle.fadeOverTime = fadeOverTime;
         this.particles.push(particle);
     }
 
@@ -247,11 +263,16 @@ export default class Game {
             this.spawn(new ShieldBall(), true);
     }
 
+    spawnBushes(count = 20) {
+        for (let i = 0; i < count; i++)
+            this.spawnParticle(new Bush(), true, false, 0, false);
+    }
+
     update(deltaTime) {
         // update particles
         this.particles = this.particles.filter(particle => {
             particle.update(deltaTime, this);
-            particle.alpha -= deltaTime * 20;
+            if (particle.fadeOverTime) particle.alpha -= deltaTime * 20;
             return particle.alpha > 0;
         });
 
