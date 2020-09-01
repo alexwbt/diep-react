@@ -58,9 +58,9 @@ export default class Grenade extends GameObject {
                 this.explode(game);
             return;
         }
-        if (this.removed && typeof otherObject.setWeapon === 'function') {
+        if (this.removed && typeof otherObject.setWeapon === 'function' && otherObject.name && !otherObject.grenade)
             otherObject.grenade++;
-        } else {
+        else {
             this.removed = false;
             this.health = this.maxHealth;
         }
