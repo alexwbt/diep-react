@@ -1,6 +1,5 @@
 import GameObject from ".";
 import { GRENADE } from "../constants";
-import CannonBall from "./CannonBall";
 
 export default class Grenade extends GameObject {
 
@@ -14,9 +13,10 @@ export default class Grenade extends GameObject {
             borderWidth: 0.3,
             ...initInfo,
             team: !!owner ? owner.team : undefined,
-            ownerId: !!owner ? owner.objectId : undefined,
             objectType: GRENADE
         });
+        if (owner)
+            this.ownerId = owner.objectId;
         this.owner = owner;
         this.timer = 3;
         this.range = 0.5;
@@ -41,38 +41,23 @@ export default class Grenade extends GameObject {
         super.update(deltaTime);
         if (this.thrown) {
             this.timer -= deltaTime;
-            if (this.timer <= 0 && !this.removed) {
-                this.removed = true;
-
-                if (!this.owner) return;
-                const step = 10 * Math.PI / 180;
-                for (let i = 0; i < 36; i++) {
-                    const x = this.x + Math.cos(i * step) * (i % 2 === 0 ? this.radius * 1.2 : this.radius);
-                    const y = this.y + Math.sin(i * step) * (i % 2 === 0 ? this.radius * 1.2 : this.radius);
-                    game.spawn(new CannonBall({
-                        x, y,
-                        radius: 2,
-                        color: this.owner.team === 0 ? '#ff0000ff' : this.owner.color,
-                        borderWidth: 0.5,
-                        renderHealthBar: false,
-                        renderOnMap: false,
-                        team: this.owner.team,
-                        health: 5,
-                        bodyDamage: 30,
-                        movingDirection: i * step,
-                        movingSpeed: 500,
-                        lifeTime: this.range,
-                        ownerId: this.owner.ownerId || this.owner.objectId,
-                        ownerName: this.owner.name
-                    }));
-                }
-            }
+            if (this.timer <= 0 && !this.removed)
+                this.explode(game);
         }
     }
 
-    collide(otherObject) {
+    explode() {
+        this.exploded = true;
+        this.removed = true;
+    }
+
+    collide(otherObject, game) {
         super.collide(otherObject);
-        if (this.thrown) return;
+        if (this.thrown) {
+            if (this.removed && !this.exploded)
+                this.explode(game);
+            return;
+        }
         if (this.removed && typeof otherObject.setWeapon === 'function') {
             otherObject.grenade++;
         } else {

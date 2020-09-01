@@ -37,7 +37,7 @@ export default class WeaponBall extends GameObject {
 
     collide(otherObject) {
         super.collide(otherObject);
-        if (this.removed && typeof otherObject.setWeapon === 'function') {
+        if (this.removed && otherObject.weapon && otherObject.objectType !== WEAPON_BALL) {
             otherObject.setWeapon(this.weaponBallType);
         } else {
             this.removed = false;

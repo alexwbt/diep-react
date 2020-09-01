@@ -39,7 +39,7 @@ const Canvas = () => {
         const toggleKeys = new Set();
         const update = () => {
             game.setKeyDown(controls.map(k => set.has(k)));
-            game.minimap.hide = toggleKeys.has('m');
+            // game.minimap.hide = toggleKeys.has('m');
         };
         const keyDownHandler = e => {
             const key = e.key.toLowerCase();
