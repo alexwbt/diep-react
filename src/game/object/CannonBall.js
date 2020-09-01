@@ -19,21 +19,13 @@ export default class CannonBall extends GameObject {
     getInfo() {
         return super.getInfo().concat([
             this.lifeTime,
-            this.ownerId
         ]);
     }
 
     setInfo(info) {
         let i = super.setInfo(info);
         this.lifeTime = info[i++];
-        this.ownerId = info[i++];
         return i;
-    }
-
-    differentTeam(otherObject) {
-        return super.differentTeam(otherObject)
-            && this.ownerId !== otherObject.objectId
-            && this.ownerId !== otherObject.ownerId;
     }
 
     update(deltaTime) {

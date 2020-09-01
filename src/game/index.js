@@ -1,17 +1,17 @@
-import { collision, circleInCircle } from './collisions';
-import { CANNON_BALL, GAME_OBJECT, HEAL_BALL, REGULAR_POLYGON, TANK, WEAPON_BALL, SHIELD_BALL, BUSH, AD_TANK, AD_TANK_BALL } from './constants';
+import { circleInCircle, collision } from './collisions';
+import { AD_TANK, AD_TANK_BALL, BUSH, CANNON_BALL, GAME_OBJECT, HEAL_BALL, REGULAR_POLYGON, SHIELD_BALL, TANK, WEAPON_BALL, GRENADE } from './constants';
 import MiniMap from './huds/minimap';
 import { degree, different } from './maths';
 import GameObject from './object';
+import AutoDefenseTankBall from './object/AutoDefenseTankBall';
+import Bush from './object/Bush';
 import CannonBall from './object/CannonBall';
 import HealBall from './object/HealBall';
 import RegularPolygon from './object/RegularPolygon';
 import ShieldBall from './object/ShieldBall';
 import Tank from './object/Tank';
 import WeaponBall from './object/WeaponBall';
-import Bush from './object/Bush';
-import AutoDefenseTank from './object/AutoDefenseTank';
-import AutoDefenseTankBall from './object/AutoDefenseTankBall';
+import Grenade from './object/Grenade';
 
 export default class Game {
 
@@ -88,6 +88,7 @@ export default class Game {
                 case BUSH: return new Bush();
                 case AD_TANK: return new Tank();
                 case AD_TANK_BALL: return new GameObject();
+                case GRENADE: return new Grenade();
             }
         };
         this.borderRadius = data.br;
@@ -267,6 +268,8 @@ export default class Game {
             this.spawn(new ShieldBall(), true);
         for (let i = 0; i < count; i++)
             this.spawn(new AutoDefenseTankBall(), true);
+        for (let i = 0; i < count; i++)
+            this.spawn(new Grenade(), true);
     }
 
     spawnBushes(count = 20) {

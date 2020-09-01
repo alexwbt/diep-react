@@ -66,7 +66,8 @@ export const socketConnect = server => dispatch => {
             {
                 name: 'killAlert',
                 callback: ({ killed, killedBy, killedId }) => {
-                    dispatch(addToast(`${killed}${killedBy ? ` was killed by ${killedBy}` : ' died'}`));
+                    if (killed === killedBy) dispatch(addToast(`${killed} committed suicide`));
+                    else dispatch(addToast(`${killed}${killedBy ? ` was killed by ${killedBy}` : ' died'}`));
                     if (game.player && killedId === game.playerId) {
                         game.playerId = 0;
                         dispatch(setMessage('You died.'));

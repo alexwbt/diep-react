@@ -13,7 +13,7 @@ export default class AutoDefenseTankBall extends GameObject {
             maxHealth: 1,
             bodyDamage: 0,
             objectType: AD_TANK_BALL
-        })
+        });
     }
 
     collide(otherObject, game) {
@@ -27,11 +27,6 @@ export default class AutoDefenseTankBall extends GameObject {
             this.removed = false;
             this.health = this.maxHealth;
         }
-    }
-
-    render(ctx, game) {
-        super.render(ctx, game);
-
     }
 
 }

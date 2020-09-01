@@ -10,6 +10,7 @@ export const SHIELD_BALL = 6;
 export const BUSH = 7;
 export const AD_TANK = 8;
 export const AD_TANK_BALL = 9;
+export const GRENADE = 10;
 
 // shapes
 export const CIRCLE = 0;

@@ -1,12 +1,16 @@
 import React, { useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import { game } from '../Game';
+import { useDispatch } from 'react-redux';
+import { socketEmit } from '../redux/actions/socketActions';
 
 const FixedCanvas = styled.canvas`
     position: fixed;
 `;
 
 const Canvas = () => {
+    const dispatch = useDispatch();
+
     const canvas = useRef(null);
     useEffect(() => game.setCanvas(canvas.current), [canvas]);
 
@@ -38,15 +42,22 @@ const Canvas = () => {
             game.minimap.hide = toggleKeys.has('m');
         };
         const keyDownHandler = e => {
+            const key = e.key.toLowerCase();
             if (!e.repeat) {
-                set.add(e.key);
-                if (toggleKeys.has(e.key)) toggleKeys.delete(e.key);
-                else toggleKeys.add(e.key);
+                set.add(key);
+                if (toggleKeys.has(key)) toggleKeys.delete(key);
+                else toggleKeys.add(key);
+
+                if (key === 'g' && game.player) {
+                    game.player.throwGrenade(game);
+                    dispatch(socketEmit('throwGrenade'));
+                }
+
                 update();
             }
         };
         const keyUpHandler = e => {
-            set.delete(e.key);
+            set.delete(e.key.toLowerCase());
             update();
         };
         window.addEventListener('keydown', keyDownHandler);
@@ -55,7 +66,7 @@ const Canvas = () => {
             window.removeEventListener('keydown', keyDownHandler);
             window.removeEventListener('keyup', keyUpHandler);
         };
-    }, []);
+    }, [dispatch]);
 
     return <FixedCanvas ref={canvas} />;
 };
