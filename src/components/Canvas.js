@@ -39,14 +39,16 @@ const Canvas = () => {
         const toggleKeys = new Set();
         const update = () => {
             game.setKeyDown(controls.map(k => set.has(k)));
-            // game.minimap.hide = toggleKeys.has('m');
+            game.minimap.hide = toggleKeys.has('m');
         };
         const keyDownHandler = e => {
             const key = e.key.toLowerCase();
             if (!e.repeat) {
                 set.add(key);
-                if (toggleKeys.has(key)) toggleKeys.delete(key);
-                else toggleKeys.add(key);
+                if (e.ctrlKey) {
+                    if (toggleKeys.has(key)) toggleKeys.delete(key);
+                    else toggleKeys.add(key);
+                }
 
                 if (key === 'g' && game.player) {
                     game.player.throwGrenade(game);

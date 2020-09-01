@@ -17,6 +17,7 @@ export default class ShieldBall extends GameObject {
     collide(otherObject) {
         super.collide(otherObject);
         if (this.removed && typeof otherObject.setWeapon === 'function') {
+            if (otherObject.shield < 0) otherObject.shield = 0;
             otherObject.shield += 10;
         } else {
             this.removed = false;
