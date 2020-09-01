@@ -66,11 +66,6 @@ export default class Grenade extends GameObject {
         }
     }
 
-    differentTeam(otherObject) {
-        return (this.team !== otherObject.team || this.team === 0)
-            && (!this.thrown || (this.ownerId !== otherObject.objectId && this.ownerId !== otherObject.ownerId))
-    }
-
     render(ctx, game) {
         const { x, y, radius, onScreen } = super.render(ctx, game);
         if (!onScreen) return;

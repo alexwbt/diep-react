@@ -49,13 +49,18 @@ export default class Tank extends GameObject {
 
     getData() {
         return super.getData().concat([
-            this.weapon.firing
+            this.weapon.firing,
+            this.weaponType,
+            this.weapon.getData(),
+            this.grenade
         ]);
     }
 
     setData(data) {
         let i = super.setData(data);
         this.weapon.firing = data[i++];
+        this.setWeapon(data[i++], data[i++]);
+        this.grenade = data[i++];
         return i;
     }
 
@@ -119,7 +124,14 @@ export default class Tank extends GameObject {
         ctx.globalAlpha = this.alpha;
         this.weapon.render(ctx, game);
         ctx.globalAlpha = 1;
-        super.render(ctx, game);
+        const { onScreen } = super.render(ctx, game);
+        if (this.grenade && onScreen) {
+            const grenade = new Grenade();
+            grenade.x = this.x;
+            grenade.y = this.y;
+            // grenade.alpha = 0.5;
+            grenade.render(ctx, game);
+        }
     }
 
     mapRender(ctx, map) {
