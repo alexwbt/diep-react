@@ -1,6 +1,6 @@
-import Tank from "./Tank";
 import { AD_TANK, defaultValue } from "../constants";
-import { degree, different, radians } from "../maths";
+import { degree, different } from "../maths";
+import Tank from "./Tank";
 
 export default class AutoDefenseTank extends Tank {
 
@@ -24,22 +24,24 @@ export default class AutoDefenseTank extends Tank {
 
     update(deltaTime, game) {
         super.update(deltaTime, game);
-        this.weapon.firing = !!this.target;
+        this.weapon.firing = false;
 
         const dif = different(this, this.owner);
         const dis = dif.x * dif.x + dif.y * dif.y;
-        const range = this.radius * 4 + this.owner.radius * 4;
-        if (dis > range * range) this.move(Math.atan2(dif.y, dif.x), deltaTime);
+        const range = 10000;
+        if (dis > range) this.move(Math.atan2(dif.y, dif.x), deltaTime);
         else if (this.target) {
-            this.rotate = degree(Math.atan2(this.target.y - this.y, this.target.x - this.x));
-            this.move(radians(this.rotate), deltaTime);
+            this.weapon.firing = true;
+            const dir = Math.atan2(this.target.y - this.y, this.target.x - this.x);
+            this.rotate = degree(dir);
+            this.move(dir, deltaTime);
             this.target = false;
         } else this.stop();
         if (!this.weapon.firing) this.rotate = this.owner.rotate;
     }
 
     otherObjectUpdate(otherObject) {
-        if (otherObject === this.owner ||
+        if (otherObject.objectId === this.ownerId ||
             !otherObject.weapon ||
             !this.differentTeam(otherObject) ||
             !otherObject.differentTeam(this))
