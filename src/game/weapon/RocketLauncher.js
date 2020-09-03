@@ -1,12 +1,12 @@
 import Cannon from './Cannon';
-import { radians, pythagorean } from '../maths';
-import Missile from '../object/Missile';
+import { radians, pythagorean, degree } from '../maths';
+import Rocket from '../object/Rocket';
 
-export default class MissileLauncher extends Cannon {
+export default class RocketLauncher extends Cannon {
 
     constructor(owner, info) {
         super(owner, info);
-        this.color = "#ddc";
+        this.color = "#777";
     }
 
     update(deltaTime, game) {
@@ -20,9 +20,10 @@ export default class MissileLauncher extends Cannon {
             const mag = pythagorean(x, y);
             const radius = this.owner.radius * this.width / 2;
             const movingSpeed = this.bulletSpeed * this.owner.bulletSpeed;
-            game.spawn(new Missile({
+            game.spawn(new Rocket({
                 x: this.owner.x + Math.cos(dir) * mag,
                 y: this.owner.y + Math.sin(dir) * mag,
+                rotate: degree(cannonDir),
                 radius,
                 color: this.owner.team === 0 ? '#ff0000ff' : this.owner.color,
                 borderWidth: 0.5,

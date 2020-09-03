@@ -1,5 +1,5 @@
 import { circleInCircle, collision } from './collisions';
-import { AD_TANK, AD_TANK_BALL, BUSH, CANNON_BALL, GAME_OBJECT, HEAL_BALL, REGULAR_POLYGON, SHIELD_BALL, TANK, WEAPON_BALL, GRENADE, MISSILE } from './constants';
+import { AD_TANK, AD_TANK_BALL, BUSH, CANNON_BALL, GAME_OBJECT, HEAL_BALL, REGULAR_POLYGON, SHIELD_BALL, TANK, WEAPON_BALL, GRENADE, MISSILE, ROCKET } from './constants';
 import MiniMap from './huds/minimap';
 import { degree, different } from './maths';
 import GameObject from './object';
@@ -13,6 +13,7 @@ import Tank from './object/Tank';
 import WeaponBall from './object/WeaponBall';
 import Grenade from './object/Grenade';
 import Missile from './object/Missile';
+import Rocket from './object/Rocket';
 
 export default class Game {
 
@@ -91,6 +92,7 @@ export default class Game {
                 case AD_TANK_BALL: return new GameObject();
                 case GRENADE: return new Grenade();
                 case MISSILE: return new Missile();
+                case ROCKET: return new Rocket();
             }
         };
         this.borderRadius = data.br;

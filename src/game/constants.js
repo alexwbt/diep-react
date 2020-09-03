@@ -12,6 +12,7 @@ export const AD_TANK = 8;
 export const AD_TANK_BALL = 9;
 export const GRENADE = 10;
 export const MISSILE = 11;
+export const ROCKET = 12;
 
 // shapes
 export const CIRCLE = 0;
