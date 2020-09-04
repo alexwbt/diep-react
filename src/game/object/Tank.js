@@ -177,8 +177,6 @@ export default class Tank extends GameObject {
             if (this.alpha === 1) {
                 this.dashPoint1 = null;
                 this.dashPoint2 = null;
-            } else {
-                this.dashPoint2 = { x: this.x, y: this.y };
             }
         }
     }
