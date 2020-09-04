@@ -67,7 +67,7 @@ export default class Game {
     }
 
     init() {
-        const player = new Tank({ x: 10, weaponType: 'twinCannon' });
+        const player = new Tank({ x: 10, weaponType: 'bazooka' });
         player.objectId = 1;
         this.playerId = 1;
         this.objects = [];
