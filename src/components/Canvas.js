@@ -35,7 +35,7 @@ const Canvas = () => {
     // key input
     useEffect(() => {
         const set = new Set();
-        const controls = ['w', 'a', 's', 'd'];
+        const controls = ['w', 'a', 's', 'd', 'shift'];
         const toggleKeys = new Set();
         const update = () => {
             game.setKeyDown(controls.map(k => set.has(k)));
@@ -50,9 +50,20 @@ const Canvas = () => {
                     else toggleKeys.add(key);
                 }
 
-                if (key === 'g' && game.player) {
-                    game.player.throwGrenade(game);
-                    dispatch(socketEmit('throwGrenade'));
+                switch (key) {
+                    case 'g':
+                        if (game.player) {
+                            game.player.throwGrenade(game);
+                            dispatch(socketEmit('throwGrenade'));
+                        }
+                        break;
+                    case 'f':
+                        if (game.player) {
+                            game.player.flash(game);
+                            dispatch(socketEmit('flash'));
+                        }
+                        break;
+                    default:
                 }
 
                 update();

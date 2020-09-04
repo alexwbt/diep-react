@@ -27,6 +27,17 @@ export default class MiniMap {
         if (this.hide) return;
         ctx.globalAlpha = this.alpha;
 
+        if (this.game.player) {
+            const dashX = this.x - this.radius;
+            const dashY = this.y + this.radius * 1.05;
+            const dashHeight = this.radius * 0.1;
+            const dashFuel = this.radius * this.game.player.dashFuel / this.game.player.maxDashFuel;
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+            ctx.fillRect(dashX, dashY, this.radius, dashHeight);
+            ctx.fillStyle = 'yellow';
+            ctx.fillRect(dashX, dashY, dashFuel, dashHeight);
+        }
+
         ctx.save();
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);

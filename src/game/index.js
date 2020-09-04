@@ -49,6 +49,7 @@ export default class Game {
         this.control = {};
         this.beforeControl = {};
         this.playerRotate = [];
+        this.dashCounter = 0;
 
         // minimap
         this.minimap = new MiniMap(this);
@@ -322,6 +323,7 @@ export default class Game {
                 input.y += this.keyMap[i].y;
             }
         }
+        this.control.dashing = this.keyDown[4];
 
         if (this.player) {
             this.control.moving = input.x !== 0 || input.y !== 0;
@@ -333,13 +335,19 @@ export default class Game {
             if ((this.control.firing !== this.beforeControl.firing
                 || this.control.rotate !== this.beforeControl.rotate
                 || this.control.moving !== this.beforeControl.moving
-                || this.control.movingDirection !== this.beforeControl.movingDirection) && this.socket) {
+                || this.control.movingDirection !== this.beforeControl.movingDirection
+                || this.control.dashing !== this.beforeControl.dashing) && this.socket) {
                 this.beforeControl.firing = this.control.firing;
                 this.beforeControl.rotate = this.control.rotate;
                 this.beforeControl.moving = this.control.moving;
                 this.beforeControl.movingDirection = this.control.movingDirection;
+                this.beforeControl.dashing = this.control.dashing;
                 this.socket.emit('update', this.control);
             }
+
+            if (this.control.dashing)
+                this.dashCounter += deltaTime;
+            else this.dashCounter = 0;
         }
         if (this.focus) {
             this.camera.x = this.focus.x;
