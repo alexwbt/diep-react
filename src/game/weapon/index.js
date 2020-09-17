@@ -42,10 +42,10 @@ export const weaponList = [
     {
         name: 'quadMissile',
         compose: (weapon, owner) => {
-            weapon.components.push(new MissileLauncher(owner, { bulletSpeed: 1.2, reloadSpeed: 1.5, length: 1.35, y:  0.25, rotate:  1.1 }));
-            weapon.components.push(new MissileLauncher(owner, { bulletSpeed: 1.2, reloadSpeed: 1.5, length: 1.35, y: -0.25, rotate: -1.1 }));
-            weapon.components.push(new MissileLauncher(owner, { bulletSpeed: 1.2, reloadSpeed: 1.5, length: 1.5, rotate: -0.62, delay: owner.reloadSpeed / 2 }));
-            weapon.components.push(new MissileLauncher(owner, { bulletSpeed: 1.2, reloadSpeed: 1.5, length: 1.5, rotate:  0.62, delay: owner.reloadSpeed / 2 }));
+            weapon.components.push(new MissileLauncher(owner, { bulletDamage: 2, bulletSpeed: 1.2, reloadSpeed: 1.5, length: 1.35, y:  0.25, rotate:  1.1 }));
+            weapon.components.push(new MissileLauncher(owner, { bulletDamage: 2, bulletSpeed: 1.2, reloadSpeed: 1.5, length: 1.35, y: -0.25, rotate: -1.1 }));
+            weapon.components.push(new MissileLauncher(owner, { bulletDamage: 2, bulletSpeed: 1.2, reloadSpeed: 1.5, length: 1.5, rotate: -0.62, delay: owner.reloadSpeed / 2 }));
+            weapon.components.push(new MissileLauncher(owner, { bulletDamage: 2, bulletSpeed: 1.2, reloadSpeed: 1.5, length: 1.5, rotate:  0.62, delay: owner.reloadSpeed / 2 }));
         }
     },
     {
