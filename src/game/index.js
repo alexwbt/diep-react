@@ -1,5 +1,5 @@
 import { circleInCircle, collision } from './collisions';
-import { AD_TANK, AD_TANK_BALL, BUSH, CANNON_BALL, GAME_OBJECT, HEAL_BALL, REGULAR_POLYGON, SHIELD_BALL, TANK, WEAPON_BALL, GRENADE, MISSILE, ROCKET } from './constants';
+import { AD_TANK, AD_TANK_BALL, BUSH, CANNON_BALL, GAME_OBJECT, HEAL_BALL, REGULAR_POLYGON, SHIELD_BALL, TANK, WEAPON_BALL, GRENADE, MISSILE, ROCKET, GRAVITY_FIELD } from './constants';
 import MiniMap from './huds/minimap';
 import { degree, different } from './maths';
 import GameObject from './object';
@@ -14,6 +14,7 @@ import WeaponBall from './object/WeaponBall';
 import Grenade from './object/Grenade';
 import Missile from './object/Missile';
 import Rocket from './object/Rocket';
+import GravityField from './object/GravityField';
 
 export default class Game {
 
@@ -94,6 +95,7 @@ export default class Game {
                 case GRENADE: return new Grenade();
                 case MISSILE: return new Missile();
                 case ROCKET: return new Rocket();
+                case GRAVITY_FIELD: return new GravityField();
             }
         };
         this.borderRadius = data.br;
@@ -290,6 +292,8 @@ export default class Game {
                     case TANK:
                         object.health -= this.minBorderRadius / this.borderRadius;
                         if (object.health <= 0) object.removed = true;
+                        break;
+                    case GRAVITY_FIELD:
                         break;
                     default:
                         const dir = Math.atan2(-object.y, -object.x);

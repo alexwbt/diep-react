@@ -209,7 +209,7 @@ export default class Tank extends GameObject {
         ctx.globalAlpha = 1;
         const { onScreen } = super.render(ctx, game);
         if (this.grenade && onScreen) {
-            const grenade = new Grenade();
+            const grenade = new Grenade({}, this.grenade);
             grenade.x = this.x;
             grenade.y = this.y;
             // grenade.alpha = 0.5;

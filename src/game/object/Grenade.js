@@ -1,12 +1,25 @@
 import GameObject from ".";
 import { GRENADE } from "../constants";
 
+const grenades = {
+    default: {
+        color: '#F6BD05ff',
+        timer: 3,
+        explode: () => { }
+    },
+    black: {
+        color: '#444444ff',
+        timer: 2,
+        explode: () => { }
+    }
+};
+
 export default class Grenade extends GameObject {
 
-    constructor(initInfo, owner) {
+    constructor(initInfo, type = 'default', owner) {
         super({
             radius: 5,
-            color: '#F6BD05ff',
+            color: grenades[type].color,
             health: !!owner ? 50 : 1,
             maxHealth: !!owner ? 50 : 1,
             bodyDamage: 0,
@@ -15,12 +28,11 @@ export default class Grenade extends GameObject {
             team: !!owner ? owner.team : undefined,
             objectType: GRENADE
         });
-        if (owner)
-            this.ownerId = owner.objectId;
+        if (owner) this.ownerId = owner.objectId;
         this.owner = owner;
-        this.timer = 3;
-        this.range = 0.5;
+        this.timer = grenades[type].timer;
         this.thrown = !!owner;
+        this.type = type;
     }
 
     getInfo() {
@@ -46,20 +58,17 @@ export default class Grenade extends GameObject {
         }
     }
 
-    explode() {
+    explode(game) {
         this.exploded = true;
         this.removed = true;
+        grenades[this.type].explode(game, this);
     }
 
-    collide(otherObject, game) {
+    collide(otherObject) {
         super.collide(otherObject);
-        if (this.thrown) {
-            if (this.removed && !this.exploded)
-                this.explode(game);
-            return;
-        }
+        if (this.thrown) return;
         if (this.removed && typeof otherObject.setWeapon === 'function' && otherObject.name && !otherObject.grenade)
-            otherObject.grenade++;
+            otherObject.grenade = this.type;
         else {
             this.removed = false;
             this.health = this.maxHealth;
@@ -72,7 +81,7 @@ export default class Grenade extends GameObject {
 
         ctx.globalAlpha = this.alpha;
         ctx.lineWidth = radius * this.borderWidth;
-        ctx.strokeStyle = Math.floor(this.timer * 5) % 2 === 0 ? 'red' : 'black';
+        ctx.strokeStyle = this.thrown && Math.floor(this.timer * 5) % 2 === 0 ? 'red' : 'black';
         ctx.beginPath();
         ctx.moveTo(x - radius, y);
         ctx.lineTo(x + radius, y);

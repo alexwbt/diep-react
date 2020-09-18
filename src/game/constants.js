@@ -9,6 +9,7 @@ export const BUSH = i++;
 export const AD_TANK = i++;
 export const MISSILE = i++;
 export const ROCKET = i++;
+export const GRAVITY_FIELD = i++;
 
 // item ball object types
 export const WEAPON_BALL = i++;
