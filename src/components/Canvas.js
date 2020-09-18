@@ -57,7 +57,7 @@ const Canvas = () => {
                             dispatch(socketEmit('throwGrenade'));
                         }
                         break;
-                    case 'f':
+                    case ' ':
                         if (game.player) {
                             game.player.flash(game);
                             dispatch(socketEmit('flash'));
