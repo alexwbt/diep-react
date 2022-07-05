@@ -8,7 +8,7 @@ const socketReducer = (state = null, action) => {
         case 'SOCKET_CONNECT':
             if (state && state.connected)
                 state.close();
-            const socket = io(action.server, { transports: ['websocket'], upgrade: false });
+            const socket = io(action.server, { transports: ['websocket'], upgrade: false, reconnection: false });
             socket.on('connect', () => {
                 emitList.forEach(e => socket.emit(e.name, e.data));
                 emitList = [];
